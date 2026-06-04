@@ -128,7 +128,9 @@ function setupDemoVideoBrowser() {
     const modalTitle = document.getElementById('demoModalTitle');
     const modalMethod = document.getElementById('demoModalMethod');
     const modalVideo = modal.querySelector('[data-modal-video]');
-    const modalCodeFrame = modal.querySelector('[data-modal-code-frame]');
+    const modalCodeBlock = modal.querySelector('[data-modal-code-block]');
+    const modalCodeContent = modalCodeBlock ? modalCodeBlock.querySelector('code') : null;
+    const modalCodeLink = modal.querySelector('[data-modal-code-link]');
     let activeOpenButton = null;
 
     function selectedOption(card) {
@@ -157,13 +159,47 @@ function setupDemoVideoBrowser() {
         card.dataset.currentCode = option.dataset.code;
     }
 
+    function setCodePreview(codePath) {
+        if (modalCodeLink) {
+            modalCodeLink.href = codePath;
+        }
+
+        if (!modalCodeContent) return;
+
+        function showCode(code) {
+            modalCodeContent.textContent = code;
+        }
+
+        const inlineCode = window.PHYSCAP_CODE_SNIPPETS && window.PHYSCAP_CODE_SNIPPETS[codePath];
+        if (window.location.protocol === 'file:' && typeof inlineCode === 'string') {
+            showCode(inlineCode);
+            return;
+        }
+
+        modalCodeContent.textContent = 'Loading code...';
+
+        fetch(codePath)
+            .then(response => {
+                if (!response.ok) throw new Error(`Unable to load ${codePath}`);
+                return response.text();
+            })
+            .then(showCode)
+            .catch(() => {
+                if (typeof inlineCode === 'string') {
+                    showCode(inlineCode);
+                } else {
+                    modalCodeContent.textContent = 'Code preview unavailable. Use Open raw to view the file.';
+                }
+            });
+    }
+
     function openDemoModal(card) {
         const option = selectedOption(card);
         const taskTitle = card.querySelector('h3');
         const previewVideo = card.querySelector('[data-demo-video]');
         const openButton = card.querySelector('[data-demo-open]');
 
-        if (!option || !modalVideo || !modalCodeFrame) return;
+        if (!option || !modalVideo || !modalCodeContent) return;
 
         activeOpenButton = openButton;
         if (previewVideo) previewVideo.pause();
@@ -172,7 +208,7 @@ function setupDemoVideoBrowser() {
         modalMethod.textContent = option.dataset.method || option.textContent.trim();
         modalVideo.src = option.dataset.video;
         modalVideo.load();
-        modalCodeFrame.src = option.dataset.code;
+        setCodePreview(option.dataset.code);
         modal.hidden = false;
         modal.setAttribute('aria-hidden', 'false');
         document.body.classList.add('demo-modal-open');
@@ -190,7 +226,7 @@ function setupDemoVideoBrowser() {
             modalVideo.load();
         }
 
-        if (modalCodeFrame) modalCodeFrame.removeAttribute('src');
+        if (modalCodeContent) modalCodeContent.textContent = '';
         if (activeOpenButton) activeOpenButton.focus();
         activeOpenButton = null;
     }
@@ -221,9 +257,7 @@ function setupDemoVideoBrowser() {
     });
 }
 
-$(document).ready(function() {
-    // Check for click events on the navbar burger icon
-
+function initializePage() {
     var options = {
 		slidesToScroll: 1,
 		slidesToShow: 1,
@@ -234,12 +268,21 @@ $(document).ready(function() {
     }
 
 	// Initialize all div with carousel class
-    var carousels = bulmaCarousel.attach('.carousel', options);
+    if (window.bulmaCarousel) {
+        bulmaCarousel.attach('.carousel', options);
+    }
 	
-    bulmaSlider.attach();
+    if (window.bulmaSlider) {
+        bulmaSlider.attach();
+    }
     
     // Setup video autoplay for carousel
     setupVideoCarouselAutoplay();
     setupDemoVideoBrowser();
+}
 
-})
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializePage);
+} else {
+    initializePage();
+}
