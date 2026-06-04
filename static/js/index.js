@@ -119,6 +119,108 @@ function setupVideoCarouselAutoplay() {
     });
 }
 
+function setupDemoVideoBrowser() {
+    const demoCards = document.querySelectorAll('[data-demo-card]');
+    const modal = document.getElementById('demoModal');
+
+    if (demoCards.length === 0 || !modal) return;
+
+    const modalTitle = document.getElementById('demoModalTitle');
+    const modalMethod = document.getElementById('demoModalMethod');
+    const modalVideo = modal.querySelector('[data-modal-video]');
+    const modalCodeFrame = modal.querySelector('[data-modal-code-frame]');
+    let activeOpenButton = null;
+
+    function selectedOption(card) {
+        const select = card.querySelector('[data-demo-select]');
+        return select ? select.options[select.selectedIndex] : null;
+    }
+
+    function updateCard(card) {
+        const option = selectedOption(card);
+        const previewVideo = card.querySelector('[data-demo-video]');
+        const source = previewVideo ? previewVideo.querySelector('source') : null;
+        const codeLink = card.querySelector('[data-code-link]');
+
+        if (!option || !source || !previewVideo || !codeLink) return;
+
+        source.src = option.dataset.video;
+        previewVideo.load();
+        if (codeLink.tagName === 'A') {
+            codeLink.href = option.dataset.code;
+        } else {
+            codeLink.dataset.code = option.dataset.code;
+            codeLink.setAttribute('aria-label', `View ${option.dataset.method || option.textContent.trim()} details`);
+        }
+        card.dataset.currentMethod = option.dataset.method || option.textContent.trim();
+        card.dataset.currentVideo = option.dataset.video;
+        card.dataset.currentCode = option.dataset.code;
+    }
+
+    function openDemoModal(card) {
+        const option = selectedOption(card);
+        const taskTitle = card.querySelector('h3');
+        const previewVideo = card.querySelector('[data-demo-video]');
+        const openButton = card.querySelector('[data-demo-open]');
+
+        if (!option || !modalVideo || !modalCodeFrame) return;
+
+        activeOpenButton = openButton;
+        if (previewVideo) previewVideo.pause();
+
+        modalTitle.textContent = taskTitle ? taskTitle.textContent : 'Task Video';
+        modalMethod.textContent = option.dataset.method || option.textContent.trim();
+        modalVideo.src = option.dataset.video;
+        modalVideo.load();
+        modalCodeFrame.src = option.dataset.code;
+        modal.hidden = false;
+        modal.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('demo-modal-open');
+        modalVideo.focus();
+    }
+
+    function closeDemoModal() {
+        modal.hidden = true;
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('demo-modal-open');
+
+        if (modalVideo) {
+            modalVideo.pause();
+            modalVideo.removeAttribute('src');
+            modalVideo.load();
+        }
+
+        if (modalCodeFrame) modalCodeFrame.removeAttribute('src');
+        if (activeOpenButton) activeOpenButton.focus();
+        activeOpenButton = null;
+    }
+
+    demoCards.forEach(card => {
+        const select = card.querySelector('[data-demo-select]');
+        const openButton = card.querySelector('[data-demo-open]');
+
+        updateCard(card);
+
+        if (select) {
+            select.addEventListener('change', () => updateCard(card));
+        }
+
+        if (openButton) {
+            openButton.addEventListener('click', () => openDemoModal(card));
+        }
+    });
+
+    modal.querySelectorAll('[data-demo-close]').forEach(closeButton => {
+        closeButton.addEventListener('click', closeDemoModal);
+    });
+
+    document.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && !modal.hidden) {
+            closeDemoModal();
+        }
+    });
+}
+
 $(document).ready(function() {
     // Check for click events on the navbar burger icon
 
@@ -138,5 +240,6 @@ $(document).ready(function() {
     
     // Setup video autoplay for carousel
     setupVideoCarouselAutoplay();
+    setupDemoVideoBrowser();
 
 })
