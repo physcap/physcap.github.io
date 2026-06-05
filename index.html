@@ -112,7 +112,7 @@
     "url": "https://physcap.github.io/",
     "image": "https://physcap.github.io/static/images/favicon.ico",
     "keywords": ["Physics-Informed Exploration", "Code-as-Policy", "Active Perception", "Robot Manipulation", "Physical Property Estimation", "Agentic Robot Learning", "Proprioceptive Sensing", "Vision-Language Models"],
-    "abstract": "We present PhysCaP, a Physics-Informed Code-as-Policy agent for active perception in robotic manipulation. While vision-language-action policies excel at imitating demonstrations, they rely on passive observation and fail to infer latent physical properties critical for manipulation. PhysCaP augments code-as-policy frameworks with a physics-informed exploration layer that enables explicit information-seeking through interaction. It introduces training-free physical property extraction modules that estimate object mass and stiffness from robot proprioception without additional sensors. To balance exploration costs and information gain, PhysCaP employs a dual-agent design: a Planner that decides when to explore and when to stop, and a Prioritizer that filters and ranks interactions by expected information gain, enabling efficient, targeted exploration. We evaluate PhysCaP on real-world tabletop manipulation tasks (searching for hidden objects, detecting empty cans, and finding ripe avocados) and a simulated task in LIBERO. The results show that existing passive and naive interactive baselines either fail when physical properties are hidden or over-explore, whereas PhysCaP achieves higher success rates with significantly fewer interactions and reduced execution time. Ablation studies further validate the effectiveness of the proposed physical property extraction modules.",
+    "abstract": "We present PhysCaP, a physics-informed Code-as-Policy agent that enables active perception for robotic manipulation by explicitly exploring to infer latent physical properties that cannot be recovered from passive visual observation alone. Our key contributions are training-free physical property extraction modules that estimate object mass and stiffness from proprioception and a dual-agent exploration framework that selectively plans and prioritizes interactions based on expected information gain, achieving higher task success with fewer interactions and lower execution time than passive and naive interactive baselines across real-world and simulated benchmarks.",
     "citation": "@inproceedings{anonymous2026physcap, title={PhysCaP: Grounding Code-as-Policy Agent with Physics-Informed Exploration}, author={Anonymous Author(s)}, booktitle={Submitted to the 10th Conference on Robot Learning (CoRL 2026)}, year={2026}, note={Anonymous submission}}",
     "isAccessibleForFree": true,
     "license": "https://creativecommons.org/licenses/by/4.0/",
@@ -169,39 +169,23 @@
 </section>
 
 <nav class="page-nav" aria-label="Project sections">
-  <a href="#overview">Overview</a>
+  <a href="#abstract">Abstract</a>
   <a href="#method">Method</a>
   <a href="#phys-eval">PhysX Eval</a>
-  <a href="#experiments">Experiments</a>
-  <a href="#results">Results</a>
-  <a href="#videos">Videos</a>
+  <a href="#tasks">Tasks</a>
+  <a href="#quantitative-results">Quantitative Results</a>
+  <a href="#qualitative-results">Qualitative Results</a>
 </nav>
 
-<!-- Main figure -->
-<section class="section hero is-light project-section" id="overview">
-  <div class="container is-max-desktop">
-    <h2 class="title is-3 has-text-centered">Overview</h2>
-    <div class="main-figure-shell">
-      <div class="figure-media">
-        <img src="static/images/framework_v10.png" alt="PhysCaP framework overview" loading="lazy">
-      </div>
-      <p class="figure-caption">
-        PhysCaP augments Code-as-Policy agents with an exploration loop. The Planner detects missing physical information, the Prioritizer ranks candidate interactions by expected information gain, and executable code calls PhysX modules such as <code>get_mass</code> and <code>get_stiffness</code>.
-      </p>
-    </div>
-  </div>
-</section>
-<!-- End main figure -->
-
 <!-- Paper abstract -->
-<section class="section hero is-light">
+<section class="section hero is-light project-section" id="abstract">
   <div class="container is-max-desktop">
     <div class="columns is-centered has-text-centered">
       <div class="column is-four-fifths">
         <h2 class="title is-3">Abstract</h2>
         <div class="content has-text-justified">
           <p>
-            We present PhysCaP, a Physics-Informed Code-as-Policy agent for active perception in robotic manipulation. While vision-language-action policies excel at imitating demonstrations, they rely on passive observation and fail to infer latent physical properties critical for manipulation. PhysCaP augments code-as-policy frameworks with a physics-informed exploration layer that enables explicit information-seeking through interaction. It introduces training-free physical property extraction modules that estimate object mass and stiffness from robot proprioception without additional sensors. To balance exploration costs and information gain, PhysCaP employs a dual-agent design: a Planner that decides when to explore and when to stop, and a Prioritizer that filters and ranks interactions by expected information gain, enabling efficient, targeted exploration. We evaluate PhysCaP on real-world tabletop manipulation tasks (searching for hidden objects, detecting empty cans, and finding ripe avocados) and a simulated task in LIBERO. The results show that existing passive and naive interactive baselines either fail when physical properties are hidden or over-explore, whereas PhysCaP achieves higher success rates with significantly fewer interactions and reduced execution time. Ablation studies further validate the effectiveness of the proposed physical property extraction modules.
+            We present PhysCaP <img class="inline-emoji" src="static/images/physcap_emoji.png" alt="" aria-hidden="true">, a physics-informed Code-as-Policy agent that enables active perception for robotic manipulation by explicitly exploring to infer latent physical properties that cannot be recovered from passive visual observation alone. Our key contributions are training-free physical property extraction modules that estimate object mass and stiffness from proprioception and a dual-agent exploration framework that selectively plans and prioritizes interactions based on expected information gain, achieving higher task success with fewer interactions and lower execution time than passive and naive interactive baselines across real-world and simulated benchmarks.
           </p>
         </div>
       </div>
@@ -214,6 +198,14 @@
 <section class="section project-section" id="method">
   <div class="container is-max-desktop">
     <h2 class="title is-3 has-text-centered">Method</h2>
+    <div class="main-figure-shell">
+      <div class="figure-media">
+        <img src="static/images/framework_v10.png" alt="PhysCaP framework overview" loading="lazy">
+      </div>
+      <p class="figure-caption">
+        PhysCaP augments Code-as-Policy agents with an exploration loop. The Planner detects missing physical information, the Prioritizer ranks candidate interactions by expected information gain, and executable code calls PhysX modules such as <code>get_mass</code> and <code>get_stiffness</code>.
+      </p>
+    </div>
     <div class="method-grid">
       <article class="method-card">
         <div class="method-icon"><i class="fas fa-search"></i></div>
@@ -243,21 +235,21 @@
 <!-- Physical module evaluation -->
 <section class="section hero is-light project-section" id="phys-eval">
   <div class="container is-max-desktop">
-    <h2 class="title is-3 has-text-centered">Physical Property Extraction (PhysX) Module Evaluation</h2>
+    <h2 class="title is-3 has-text-centered">PhysX Module Evaluation</h2>
     <div class="eval-figure-shell">
       <img src="static/images/phys-eval.png" alt="Accuracy evaluation graph for PhysCaP physical property extraction modules" loading="lazy">
     </div>
     <p class="figure-caption">
-      The physical property extraction modules estimate task-relevant latent properties from robot proprioception without additional sensing hardware.
+      PhysX (physical property extraction modules) estimate task-relevant latent properties from robot proprioception without additional sensing hardware.
     </p>
   </div>
 </section>
 <!-- End physical module evaluation -->
 
-<!-- Experiments -->
-<section class="section hero is-light project-section" id="experiments">
+<!-- Tasks -->
+<section class="section hero is-light project-section" id="tasks">
   <div class="container is-max-desktop">
-    <h2 class="title is-3 has-text-centered">Experiments</h2>
+    <h2 class="title is-3 has-text-centered">Real-world and Simulated Tasks</h2>
     <div class="task-grid">
       <article class="task-card task-card--visual task-card--blue-cubes" tabindex="0">
         <span class="task-kicker">Task 1</span>
@@ -282,12 +274,12 @@
     </div>
   </div>
 </section>
-<!-- End experiments -->
+<!-- End tasks -->
 
-<!-- Results -->
-<section class="section project-section" id="results">
+<!-- Quantitative results -->
+<section class="section project-section" id="quantitative-results">
   <div class="container is-max-desktop">
-    <h2 class="title is-3 has-text-centered">Main Results</h2>
+    <h2 class="title is-3 has-text-centered">Quantitative Results</h2>
     <div class="metric-row">
       <div class="metric-card">
         <span class="metric-value">9/10</span>
@@ -390,10 +382,10 @@
     <p class="table-note">SR: success rate. OI: average number of exploratory object interactions on successful trials. Time: robot execution time.</p>
   </div>
 </section>
-<!-- End results -->
+<!-- End quantitative results -->
 
-<!-- Video results -->
-<section class="section hero is-light project-section" id="videos">
+<!-- Qualitative results -->
+<section class="section hero is-light project-section" id="qualitative-results">
   <div class="container is-max-desktop">
     <h2 class="title is-3 has-text-centered">Qualitative Results</h2>
 
@@ -601,7 +593,7 @@
     </div>
   </div>
 </section>
-<!-- End video results -->
+<!-- End qualitative results -->
 
 </main>
 
