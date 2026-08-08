@@ -162,21 +162,38 @@ body {
 .publication-authors {
     font-family: 'Inter', sans-serif !important;
     font-weight: 500;
-    margin-bottom: 1.5rem;
+    max-width: 900px;
+    margin: 0 auto 0.6rem;
+    line-height: 1.6;
 }
 
-.publication-author-stack {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.35rem;
-    margin-bottom: 1.25rem;
-    line-height: 1.35;
+.publication-authors sup,
+.publication-affiliations sup,
+.publication-note sup {
+    font-size: 0.7em;
+    font-weight: 600;
+    margin-left: 0.05em;
 }
 
-.publication-author-stack .author-block {
-    display: block;
-    margin-right: 0;
+.publication-affiliations {
+    max-width: 900px;
+    margin: 0 auto 0.5rem;
+    color: var(--text-secondary);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+}
+
+.affiliation-block {
+    display: inline-block;
+    margin: 0 0.75rem 0.15rem 0;
+    white-space: nowrap;
+}
+
+.publication-note {
+    color: var(--text-secondary);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
 }
 
 .publication-venue {
@@ -1360,7 +1377,16 @@ body.demo-modal-open {
   .publication-authors {
     font-size: 1rem !important;
   }
-  
+
+  .publication-affiliations {
+    font-size: 0.875rem !important;
+  }
+
+  .affiliation-block {
+    margin-right: 0.6rem;
+    white-space: normal;
+  }
+
   .button {
     margin: 0.25rem !important;
     font-size: 0.875rem !important;
