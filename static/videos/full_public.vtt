@@ -1,0 +1,112 @@
+WEBVTT
+
+00:00:05.830 --> 00:00:10.670
+Imagine a robot is asked to find the one empty can among four.
+
+00:00:10.730 --> 00:00:15.570
+Appearance can narrow the candidates, but it cannot reveal the deciding property: mass.
+
+00:00:15.950 --> 00:00:19.576
+Could a vision-language model infer that mass instead?
+
+00:00:19.636 --> 00:00:24.644
+In our ablation, even with images, joint torque, and object identity,
+
+00:00:24.704 --> 00:00:28.790
+its quantitative estimates remain too unreliable for this decision.
+
+00:00:29.950 --> 00:00:36.823
+PhysX instead measures the missing property directly from robot proprioception: mass from joint torques,
+
+00:00:36.883 --> 00:00:42.270
+and stiffness from gripper force and deformation, without additional tactile sensors.
+
+00:00:42.660 --> 00:00:44.709
+But measurement itself has a cost.
+
+00:00:44.769 --> 00:00:47.873
+If we simply add PhysX to a code-as-policy agent,
+
+00:00:47.933 --> 00:00:51.740
+it can resolve the hidden state, but may measure every object.
+
+00:00:52.660 --> 00:00:59.307
+So the second question is: what should the robot measure, and when does it know enough?
+
+00:00:59.367 --> 00:01:03.080
+PhysCaP turns physical exploration into an explicit decision process.
+
+00:01:03.450 --> 00:01:08.259
+The Planner identifies what information is missing and decides when to stop.
+
+00:01:08.319 --> 00:01:12.722
+The Prioritizer filters and ranks candidate interactions by likely task relevance.
+
+00:01:12.782 --> 00:01:15.968
+A Coding Agent executes the selected PhysX measurement.
+
+00:01:16.028 --> 00:01:22.460
+The result updates the system belief, and the cycle repeats only if more evidence is needed.
+
+00:01:22.830 --> 00:01:24.670
+Let's follow one execution.
+
+00:01:24.730 --> 00:01:28.470
+The Planner first identifies what information is missing.
+
+00:01:28.530 --> 00:01:33.220
+The Prioritizer uses observable cues to rank the remaining candidates.
+
+00:01:33.280 --> 00:01:36.070
+PhysX measures the most promising candidate.
+
+00:01:36.130 --> 00:01:38.920
+One more measurement resolves the ambiguity.
+
+00:01:38.980 --> 00:01:40.820
+Now it knows enough.
+
+00:01:41.580 --> 00:01:44.021
+The same framework extends beyond mass.
+
+00:01:44.081 --> 00:01:47.772
+In Pick Ripe Avocado, observable cues narrow the search,
+
+00:01:47.832 --> 00:01:51.524
+but stiffness is needed to distinguish the remaining candidates.
+
+00:01:51.584 --> 00:01:58.193
+In Pack Grocery Bag, PhysCaP gathers and combines physical measurements over a longer horizon to select
+
+00:01:58.253 --> 00:01:59.860
+a suitable foundation item.
+
+00:02:02.830 --> 00:02:07.076
+Across the real-world tasks, physical sensing provides the missing capability.
+
+00:02:07.136 --> 00:02:12.674
+The vision-only code-as-policy agent struggles when success depends on hidden mass or stiffness,
+
+00:02:12.734 --> 00:02:16.980
+while adding PhysX gives the agent access to those properties.
+
+00:02:18.820 --> 00:02:20.994
+Targeted exploration provides the efficiency.
+
+00:02:21.054 --> 00:02:23.675
+Compared with the exhaustive physical baseline,
+
+00:02:23.735 --> 00:02:29.931
+PhysCaP requires fewer physical interactions across all three tasks and reduces robot execution time.
+
+00:02:29.991 --> 00:02:35.740
+On Empty Can, for example, exploration drops from four can measurements to two.
+
+00:02:36.120 --> 00:02:38.358
+PhysCaP addresses two complementary problems:
+
+00:02:38.418 --> 00:02:44.334
+how to obtain physical information, and how to acquire only what is useful.
+
+00:02:44.394 --> 00:02:49.850
+PhysX provides physical grounding; the Planner and Prioritizer make that grounding efficient.

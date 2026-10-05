@@ -1,704 +1,761 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="en" data-theme="v1">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  
-  <!-- Primary Meta Tags -->
-  <meta name="title" content="PhysCaP: Grounding Code-as-Policy Agent with Physics-Informed Exploration - Lin et al.">
-  <meta name="description" content="PhysCaP adds physics-informed exploration to Code-as-Policy agents, enabling robots to infer hidden mass and stiffness with fewer interactions.">
-  <meta name="keywords" content="Physics-Informed Exploration, Code-as-Policy, Active Perception, Robot Manipulation, Physical Property Estimation, Agentic Robot Learning, Proprioceptive Sensing, Vision-Language Models">
-  <meta name="author" content="Chen-Yu Lin, Jing-Wen Chen, Hsueh-En Chang, Hung-An Chen, Sheng-Hsun Chang, Chi-Pin Huang, Fu-En Yang, Min-Hung Chen, Kuang-Huei Lee, Yi-Ting Chen, Yu-Chiang Frank Wang, Shao-Hua Sun">
-  <meta name="robots" content="index, follow">
-  <meta name="language" content="English">
-  
-  <!-- Open Graph / Facebook -->
-  <meta property="og:type" content="article">
-  <meta property="og:site_name" content="PhysCaP">
+  <title>PhysCaP: Grounding Code-as-Policy Agent with Physics-Informed Exploration</title>
+  <meta name="description" content="PhysCaP augments code-as-policy agents with physics-informed exploration: training-free modules that measure object mass and stiffness, and a Planner and Prioritizer that decide when and what to explore.">
   <meta property="og:title" content="PhysCaP: Grounding Code-as-Policy Agent with Physics-Informed Exploration">
-  <meta property="og:description" content="PhysCaP adds physics-informed exploration to Code-as-Policy agents, enabling robots to infer hidden mass and stiffness with fewer interactions.">
+  <meta property="og:description" content="Physics-informed exploration for code-as-policy robot agents.">
+  <meta property="og:type" content="website">
   <meta property="og:url" content="https://physcap.github.io/">
-  <meta property="og:image" content="https://physcap.github.io/static/images/favicon.ico">
-  <meta property="og:image:alt" content="PhysCaP research preview">
-  <meta property="article:published_time" content="2026-06-02T00:00:00.000Z">
-  <meta property="article:author" content="Chen-Yu Lin, Jing-Wen Chen, Hsueh-En Chang, Hung-An Chen, Sheng-Hsun Chang, Chi-Pin Huang, Fu-En Yang, Min-Hung Chen, Kuang-Huei Lee, Yi-Ting Chen, Yu-Chiang Frank Wang, Shao-Hua Sun">
-  <meta property="article:section" content="Research">
-  <meta property="article:tag" content="Robotics">
-  <meta property="article:tag" content="Active Perception">
-
-  <!-- Twitter -->
+  <meta property="og:image" content="https://physcap.github.io/static/images/teaser.jpg">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="PhysCaP: Grounding Code-as-Policy Agent with Physics-Informed Exploration">
-  <meta name="twitter:description" content="PhysCaP adds physics-informed exploration to Code-as-Policy agents, enabling robots to infer hidden mass and stiffness with fewer interactions.">
-  <meta name="twitter:image" content="https://physcap.github.io/static/images/favicon.ico">
-  <meta name="twitter:image:alt" content="PhysCaP research preview">
-
-  <!-- Academic/Research Specific -->
-  <meta name="citation_title" content="PhysCaP: Grounding Code-as-Policy Agent with Physics-Informed Exploration">
-  <meta name="citation_author" content="Lin, Chen-Yu">
-  <meta name="citation_author" content="Chen, Jing-Wen">
-  <meta name="citation_author" content="Chang, Hsueh-En">
-  <meta name="citation_author" content="Chen, Hung-An">
-  <meta name="citation_author" content="Chang, Sheng-Hsun">
-  <meta name="citation_author" content="Huang, Chi-Pin">
-  <meta name="citation_author" content="Yang, Fu-En">
-  <meta name="citation_author" content="Chen, Min-Hung">
-  <meta name="citation_author" content="Lee, Kuang-Huei">
-  <meta name="citation_author" content="Chen, Yi-Ting">
-  <meta name="citation_author" content="Wang, Yu-Chiang Frank">
-  <meta name="citation_author" content="Sun, Shao-Hua">
-  <meta name="citation_publication_date" content="2026">
-  <meta name="citation_conference_title" content="Submitted to the 10th Conference on Robot Learning (CoRL 2026)">
-  
-  <!-- Additional SEO -->
-  <meta name="theme-color" content="#2563eb">
-  <meta name="msapplication-TileColor" content="#2563eb">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  
-  <!-- Preconnect for performance -->
+  <link rel="icon" type="image/png" href="static/images/favicon_cap.png">
+  <link rel="apple-touch-icon" href="static/images/apple_touch_cap.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preconnect" href="https://ajax.googleapis.com">
-  <link rel="preconnect" href="https://cdn.jsdelivr.net">
-
-
-  <title>PhysCaP</title>
-  
-  <!-- Favicon and App Icons -->
-  <link rel="icon" type="image/x-icon" href="static/images/favicon.ico">
-  <link rel="apple-touch-icon" href="static/images/favicon.ico">
-  
-  <!-- Critical CSS - Load synchronously -->
-  <link rel="stylesheet" href="static/css/bulma.min.css">
-  <link rel="stylesheet" href="static/css/index.css">
-  
-  <!-- Non-critical CSS - Load asynchronously -->
-  <link rel="preload" href="static/css/bulma-carousel.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <link rel="preload" href="static/css/bulma-slider.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <link rel="preload" href="static/css/fontawesome.all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  <link rel="preload" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-  
-  <!-- Fallback for browsers that don't support preload -->
-  <noscript>
-    <link rel="stylesheet" href="static/css/bulma-carousel.min.css">
-    <link rel="stylesheet" href="static/css/bulma-slider.min.css">
-    <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
-  </noscript>
-  
-  <!-- Fonts - Optimized loading -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
-  
-  <!-- Defer non-critical JavaScript -->
-  <script defer src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-  <script defer src="static/js/fontawesome.all.min.js"></script>
-  <script defer src="static/js/bulma-carousel.min.js"></script>
-  <script defer src="static/js/bulma-slider.min.js"></script>
-  <script defer src="static/js/code-snippets.js"></script>
-  <script defer src="static/js/index.js"></script>
-  
-  <!-- Structured Data for Academic Papers -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "ScholarlyArticle",
-    "headline": "PhysCaP: Grounding Code-as-Policy Agent with Physics-Informed Exploration",
-    "description": "PhysCaP adds physics-informed exploration to Code-as-Policy agents, enabling robots to infer hidden mass and stiffness with fewer interactions.",
-    "author": [
-      {
-        "@type": "Person",
-        "name": "Chen-Yu Lin",
-        "affiliation": { "@type": "Organization", "name": "National Taiwan University" }
-      },
-      {
-        "@type": "Person",
-        "name": "Jing-Wen Chen",
-        "affiliation": { "@type": "Organization", "name": "National Taiwan University" }
-      },
-      {
-        "@type": "Person",
-        "name": "Hsueh-En Chang",
-        "affiliation": { "@type": "Organization", "name": "National Taiwan University" }
-      },
-      {
-        "@type": "Person",
-        "name": "Hung-An Chen",
-        "affiliation": { "@type": "Organization", "name": "National Taiwan University" }
-      },
-      {
-        "@type": "Person",
-        "name": "Sheng-Hsun Chang",
-        "affiliation": { "@type": "Organization", "name": "National Taiwan University" }
-      },
-      {
-        "@type": "Person",
-        "name": "Chi-Pin Huang",
-        "affiliation": { "@type": "Organization", "name": "NVIDIA Research" }
-      },
-      {
-        "@type": "Person",
-        "name": "Fu-En Yang",
-        "affiliation": { "@type": "Organization", "name": "NVIDIA Research" }
-      },
-      {
-        "@type": "Person",
-        "name": "Min-Hung Chen",
-        "affiliation": { "@type": "Organization", "name": "NVIDIA Research" }
-      },
-      {
-        "@type": "Person",
-        "name": "Kuang-Huei Lee",
-        "affiliation": { "@type": "Organization", "name": "Google DeepMind" }
-      },
-      {
-        "@type": "Person",
-        "name": "Yi-Ting Chen",
-        "affiliation": { "@type": "Organization", "name": "National Yang Ming Chiao Tung University" }
-      },
-      {
-        "@type": "Person",
-        "name": "Yu-Chiang Frank Wang",
-        "affiliation": { "@type": "Organization", "name": "NVIDIA Research" }
-      },
-      {
-        "@type": "Person",
-        "name": "Shao-Hua Sun",
-        "affiliation": { "@type": "Organization", "name": "National Taiwan University" }
-      }
-    ],
-    "datePublished": "2026-06-02",
-    "publisher": {
-      "@type": "Organization",
-      "name": "Submitted to the 10th Conference on Robot Learning (CoRL 2026)"
-    },
-    "url": "https://physcap.github.io/",
-    "image": "https://physcap.github.io/static/images/favicon.ico",
-    "keywords": ["Physics-Informed Exploration", "Code-as-Policy", "Active Perception", "Robot Manipulation", "Physical Property Estimation", "Agentic Robot Learning", "Proprioceptive Sensing", "Vision-Language Models"],
-    "abstract": "We present PhysCaP, a physics-informed Code-as-Policy agent that enables active perception for robotic manipulation by explicitly exploring to infer latent physical properties that cannot be recovered from passive visual observation alone. Our key contributions are training-free physical property extraction modules that estimate object mass and stiffness from proprioception and a dual-agent exploration framework that selectively plans and prioritizes interactions based on expected information gain, achieving higher task success with fewer interactions and lower execution time than passive and naive interactive baselines across real-world and simulated benchmarks.",
-    "citation": "@inproceedings{lin2026physcap, title={PhysCaP: Grounding Code-as-Policy Agent with Physics-Informed Exploration}, author={Lin, Chen-Yu and Chen, Jing-Wen and Chang, Hsueh-En and Chen, Hung-An and Chang, Sheng-Hsun and Huang, Chi-Pin and Yang, Fu-En and Chen, Min-Hung and Lee, Kuang-Huei and Chen, Yi-Ting and Wang, Yu-Chiang Frank and Sun, Shao-Hua}, booktitle={Submitted to the 10th Conference on Robot Learning (CoRL 2026)}, year={2026}}",
-    "isAccessibleForFree": true,
-    "license": "https://creativecommons.org/licenses/by/4.0/",
-    "mainEntity": {
-      "@type": "WebPage",
-      "@id": "https://physcap.github.io/"
-    },
-    "about": [
-      {
-        "@type": "Thing",
-        "name": "Robot Manipulation"
-      },
-      {
-        "@type": "Thing", 
-        "name": "Active Perception"
-      }
-    ]
-  }
+  <link href="https://fonts.googleapis.com/css2?family=Google+Sans:wght@400;500;600;700;800&family=Lato:wght@300;700;900&family=Google+Sans+Code:wght@400;500&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+  <link rel="stylesheet" href="static/css/style.css">
+  <script>
+    window.MathJax = { tex: { inlineMath: [["\\(", "\\)"]] }, svg: { fontCache: "global" } };
   </script>
+  <script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script defer src="static/js/main.js"></script>
+  <script defer src="static/js/agent_anim.js"></script>
 </head>
 <body>
 
+<div class="progress" id="progress"></div>
+<header class="topbar" id="topbar">
+  <a class="brand" href="#top"><img class="cap" src="static/images/cap.png" alt="">PhysCaP</a>
+  <nav id="section-nav" aria-label="Sections">
+    <a href="#video">Video</a>
+    <a href="#abstract">Abstract</a>
+    <a href="#method">Method</a>
+    <a href="#tasks">Tasks</a>
+    <a href="#results">Results</a>
+<a href="#bibtex">BibTeX</a>  </nav>
+  <span class="current-label" id="current-label"></span>
+</header>
 
-  <!-- Scroll to Top Button -->
-  <button class="scroll-to-top" onclick="scrollToTop()" title="Scroll to top" aria-label="Scroll to top">
-    <i class="fas fa-chevron-up"></i>
-  </button>
 
-  <main id="main-content">
-  <section class="hero">
-    <div class="hero-body">
-      <div class="container is-max-desktop">
-        <div class="columns is-centered">
-          <div class="column has-text-centered">
-            <h1 class="title is-1 publication-title">
-              PhysCaP
-              <img class="title-emoji" src="static/images/physcap_emoji.png" alt="" aria-hidden="true">
-              <span class="title-colon">:</span>
-              <span class="title-rest">Grounding Code-as-Policy Agent with Physics-Informed Exploration</span>
-            </h1>
-            <p class="publication-subtitle">
-              A physics-informed Code-as-Policy agent that actively measures hidden physical properties when passive vision is not enough.
-            </p>
-            <div class="is-size-5 publication-authors">
-              <span class="author-block">Chen-Yu Lin<sup>1*</sup>,</span>
-              <span class="author-block">Jing-Wen Chen<sup>1*</sup>,</span>
-              <span class="author-block">Hsueh-En Chang<sup>1</sup>,</span>
-              <span class="author-block">Hung-An Chen<sup>1</sup>,</span>
-              <span class="author-block">Sheng-Hsun Chang<sup>1</sup>,</span>
-              <span class="author-block">Chi-Pin Huang<sup>2</sup>,</span>
-              <span class="author-block">Fu-En Yang<sup>2</sup>,</span>
-              <span class="author-block">Min-Hung Chen<sup>2</sup>,</span>
-              <span class="author-block">Kuang-Huei Lee<sup>3</sup>,</span>
-              <span class="author-block">Yi-Ting Chen<sup>4</sup>,</span>
-              <span class="author-block">Yu-Chiang Frank Wang<sup>2</sup>,</span>
-              <span class="author-block">Shao-Hua Sun<sup>1</sup></span>
-            </div>
-            <div class="is-size-6 publication-affiliations">
-              <span class="affiliation-block"><sup>1</sup>National Taiwan University</span>
-              <span class="affiliation-block"><sup>2</sup>NVIDIA Research</span>
-              <span class="affiliation-block"><sup>3</sup>Google DeepMind</span>
-              <span class="affiliation-block"><sup>4</sup>National Yang Ming Chiao Tung University</span>
-            </div>
-            <div class="publication-note"><sup>*</sup>Equal contribution</div>
+<!-- ===================== First screen: full-screen robot video ===================== -->
+<section class="hero" id="top">
+  <video class="bg" autoplay muted loop playsinline preload="auto" poster="static/videos/hero.jpg">
+    <source src="static/videos/hero.mp4" type="video/mp4">
+  </video>
+  <div class="hero-inner">
+    <div class="title-block">  <h1 class="title"><span class="name"><img class="cap" src="static/images/cap.png" alt="">PhysCaP</span></h1>
+  <p class="subtitle">Grounding Code-as-Policy Agent with Physics-Informed Exploration</p>
+  <p class="authors">
+<span class="author"><a href="https://tripled0232.github.io/" target="_blank" rel="noopener">Chen-Yu Lin</a><sup>1*</sup></span> <span class="author"><a href="https://joycelyn-chen.github.io/" target="_blank" rel="noopener">Jing-Wen Chen</a><sup>1*</sup></span> <span class="author">Hsueh-En Chang<sup>1</sup></span> <span class="author">Hung-An Chen<sup>1</sup></span> <span class="author">Sheng-Hsun Chang<sup>1</sup></span> <span class="author"><a href="https://jasper0314-huang.github.io/" target="_blank" rel="noopener">Chi-Pin Huang</a><sup>2</sup></span> <span class="author"><a href="https://fuenyang1127.github.io/" target="_blank" rel="noopener">Fu-En Yang</a><sup>2</sup></span> <span class="author"><a href="https://minhungchen.netlify.app/" target="_blank" rel="noopener">Min-Hung Chen</a><sup>2</sup></span> <span class="author"><a href="https://sites.google.com/site/yitingchen0524/home" target="_blank" rel="noopener">Yi-Ting Chen</a><sup>3</sup></span> <span class="author"><a href="https://vllab.ee.ntu.edu.tw/ycwang.html" target="_blank" rel="noopener">Yu-Chiang Frank Wang</a><sup>2</sup></span> <span class="author"><a href="https://shaohua0116.github.io/" target="_blank" rel="noopener">Shao-Hua Sun</a><sup>1</sup></span>   </p>
+  <p class="affils"><span><sup>1</sup>National Taiwan University</span> <span><sup>2</sup>NVIDIA Research</span> <span><sup>3</sup>National Yang Ming Chiao Tung University</span> </p>
+  <p class="note"><sup>*</sup>Equal contribution</p>
+  <a class="venue" href="http://www.robot-learning.ml/2026/" target="_blank" rel="noopener"><i class="fa-solid fa-award"></i> Accepted at the 8th Robot Learning Workshop @ NeurIPS 2026</a>
+  <div class="buttons">
+    <span class="btn is-disabled" title="The updated paper will be posted soon"><i class="fa-solid fa-file-pdf"></i> Paper <span class="soon">(Coming Soon)</span></span>
+    <a class="btn" href="https://arxiv.org/abs/2608.21031" target="_blank" rel="noopener"><i class="ai ai-arxiv"></i> arXiv</a>
+    <span class="btn is-disabled" title="Code release in progress"><i class="fa-brands fa-github"></i> Code <span class="soon">(Coming Soon)</span></span>
+    <a class="btn" href="#video"><i class="fa-solid fa-film"></i> Video</a>
+    <a class="btn" href="#tasks"><i class="fa-solid fa-code"></i> Generated Code</a>
+<a class="btn" href="#bibtex"><i class="fa-solid fa-quote-right"></i> BibTeX</a>  </div>
+</div>
+  </div>
+  <a class="scroll-hint" href="#video">SCROLL<i class="fa-solid fa-chevron-down"></i></a>
+  <span class="video-tag">Real robot, sped up</span>
+</section>
 
-        </div>
-      </div>
+
+<!-- ===================== Video ===================== -->
+<section class="block" id="video" data-nav="Video">
+  <div class="container narrow">
+    <h2 class="section-title">Video</h2>
+    <div class="video-frame">
+      <video controls preload="metadata" playsinline poster="static/videos/full_public.jpg">
+        <source src="static/videos/full_public.mp4" type="video/mp4">
+<track kind="subtitles" srclang="en" label="English" src="static/videos/full_public.vtt">      </video>
     </div>
   </div>
 </section>
 
-<nav class="page-nav" aria-label="Project sections">
-  <a href="#abstract">Abstract</a>
-  <a href="#method">Method</a>
-  <a href="#phys-eval">PhysX Eval</a>
-  <a href="#tasks">Tasks</a>
-  <a href="#quantitative-results">Quantitative Results</a>
-  <a href="#qualitative-results">Qualitative Results</a>
-</nav>
-
-<!-- Paper abstract -->
-<section class="section hero is-light project-section" id="abstract">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered has-text-centered">
-      <div class="column is-four-fifths">
-        <h2 class="title is-3">Abstract</h2>
-        <div class="content has-text-justified">
-          <p>
-            We present PhysCaP <img class="inline-emoji" src="static/images/physcap_emoji.png" alt="" aria-hidden="true">, a physics-informed Code-as-Policy agent that enables active perception for robotic manipulation by explicitly exploring to infer latent physical properties that cannot be recovered from passive visual observation alone. Our key contributions are training-free physical property extraction modules that estimate object mass and stiffness from proprioception and a dual-agent exploration framework that selectively plans and prioritizes interactions based on expected information gain, achieving higher task success with fewer interactions and lower execution time than passive and naive interactive baselines across real-world and simulated benchmarks.
-          </p>
-        </div>
-      </div>
+<!-- ===================== Abstract ===================== -->
+<section class="block alt" id="abstract" data-nav="Abstract">
+  <div class="container narrow">
+    <h2 class="section-title">Abstract</h2>
+    <p class="lead">We present PhysCaP, a Physics-Informed Code-as-Policy agent system for active perception in robotic manipulation. While vision-language-action policies excel at imitating demonstrations, they rely on passive observation and fail to infer latent physical properties critical for manipulation. PhysCaP augments code-as-policy frameworks with a physics-informed exploration layer that enables explicit information-seeking through interaction. Our method introduces training-free physical property extraction modules that estimate object mass and stiffness from robot proprioception without additional sensors. To balance exploration costs and the efficiency of information obtained, PhysCaP employs a multi-agent design: a Planner that decides when to explore and when to stop, and a Prioritizer that filters implausible interactions and ranks the remainder using a heuristic priority score, enabling efficient, targeted exploration. We evaluate PhysCaP on three real-world tabletop manipulation tasks and a simulated task in LIBERO. The results show that existing passive and naive interactive baselines either fail when physical properties are hidden or over-explore, whereas PhysCaP achieves comparable performance with fewer interactions and reduced execution time. Ablation studies further validate the effectiveness of the proposed physical property extraction modules.</p>
+    <div class="figure plain" style="margin-top:1.8rem; max-width: 630px">
+      <img src="static/images/teaser.jpg" alt="PhysCaP teaser: measuring the mass of cans to find the empty one" loading="lazy">
     </div>
+    <p class="caption"><b>PhysCaP</b> augments Code-as-Policy (CaP) agents with physics-informed exploration, enabling inference of latent object properties (e.g., mass) via physical property extraction modules to solve manipulation tasks requiring hidden-state estimation, e.g., removing an empty can.</p>
   </div>
 </section>
-<!-- End paper abstract -->
 
-<!-- Method -->
-<section class="section project-section" id="method">
-  <div class="container is-max-desktop">
-    <h2 class="title is-3 has-text-centered">Method</h2>
-    <div class="main-figure-shell">
-      <div class="figure-media">
-        <img src="static/images/framework_v10.png" alt="PhysCaP framework overview" loading="lazy">
-      </div>
-      <p class="figure-caption">
-        PhysCaP augments Code-as-Policy agents with an exploration loop. The Planner detects missing physical information, the Prioritizer ranks candidate interactions by expected information gain, and executable code calls PhysX modules such as <code>get_mass</code> and <code>get_stiffness</code>.
-      </p>
-    </div>
-    <div class="method-grid">
-      <article class="method-card">
-        <div class="method-icon"><i class="fas fa-search"></i></div>
-        <h3>Planner</h3>
-        <p>Checks whether the visual scene contains enough information to solve the task. If not, it proposes candidate physical interactions.</p>
-      </article>
-      <article class="method-card">
-        <div class="method-icon"><i class="fas fa-sort-amount-down"></i></div>
-        <h3>Prioritizer</h3>
-        <p>Filters implausible or redundant interactions and ranks the remaining candidates to reduce unnecessary robot actions.</p>
-      </article>
-      <article class="method-card">
-        <div class="method-icon"><i class="fas fa-weight-hanging"></i></div>
-        <h3>Mass Measurement</h3>
-        <p>Estimates object mass from joint-torque differences during a fixed lift trajectory, using the end-effector Jacobian.</p>
-      </article>
-      <article class="method-card">
-        <div class="method-icon"><i class="fas fa-compress-arrows-alt"></i></div>
-        <h3>Stiffness Measurement</h3>
-        <p>Classifies stiffness from gripper displacement and normalized motor effort, using repeated measurements and majority vote.</p>
-      </article>
-    </div>
-  </div>
-</section>
-<!-- End method -->
-
-<!-- Physical module evaluation -->
-<section class="section hero is-light project-section" id="phys-eval">
-  <div class="container is-max-desktop">
-    <h2 class="title is-3 has-text-centered">PhysX Module Evaluation</h2>
-    <div class="eval-figure-shell">
-      <img src="static/images/phys-eval.png" alt="Accuracy evaluation graph for PhysCaP physical property extraction modules" loading="lazy">
-    </div>
-    <p class="figure-caption">
-      PhysX (physical property extraction modules) estimate task-relevant latent properties from robot proprioception without additional sensing hardware.
-    </p>
-  </div>
-</section>
-<!-- End physical module evaluation -->
-
-<!-- Tasks -->
-<section class="section hero is-light project-section" id="tasks">
-  <div class="container is-max-desktop">
-    <h2 class="title is-3 has-text-centered">Real-world and Simulated Tasks</h2>
-    <div class="task-grid">
-      <article class="task-card task-card--visual task-card--blue-cubes" tabindex="0">
-        <span class="task-kicker">Task 1</span>
-        <h3>Find Blue Cube</h3>
-        <p>Reveal a hidden blue cube under one of several cups while avoiding infeasible cup lifts through visual and geometric reasoning.</p>
-      </article>
-      <article class="task-card task-card--visual task-card--empty-cans" tabindex="0">
-        <span class="task-kicker">Task 2</span>
-        <h3>Identify Empty Can</h3>
-        <p>Use mass measurements to infer which can is empty when visual cues alone cannot reveal the hidden state.</p>
-      </article>
-      <article class="task-card task-card--visual task-card--avocado" tabindex="0">
-        <span class="task-kicker">Task 3</span>
-        <h3>Pick Ripe Avocado</h3>
-        <p>Use stiffness measurements to identify a ripe avocado among visually similar candidates.</p>
-      </article>
-      <article class="task-card task-card--visual task-card--simulation" tabindex="0">
-        <span class="task-kicker">Simulation</span>
-        <h3>LIBERO Empty Can</h3>
-        <p>Evaluate the same hidden-property reasoning pattern in a simulated manipulation environment.</p>
-      </article>
-    </div>
-  </div>
-</section>
-<!-- End tasks -->
-
-<!-- Quantitative results -->
-<section class="section project-section" id="quantitative-results">
-  <div class="container is-max-desktop">
-    <h2 class="title is-3 has-text-centered">Quantitative Results</h2>
-    <div class="metric-row">
-      <div class="metric-card">
-        <span class="metric-value">9/10</span>
-        <span class="metric-label">Find Blue Cube SR</span>
-      </div>
-      <div class="metric-card">
-        <span class="metric-value">8/10</span>
-        <span class="metric-label">Identify Empty Can SR</span>
-      </div>
-      <div class="metric-card">
-        <span class="metric-value">9/10</span>
-        <span class="metric-label">Pick Ripe Avocado SR</span>
-      </div>
-    </div>
-    <div class="table-wrap">
-      <table class="results-table">
-        <thead>
-          <tr>
-            <th rowspan="2">Method</th>
-            <th colspan="3">Find Blue Cube</th>
-            <th colspan="3">Identify Empty Can</th>
-            <th colspan="3">Pick Ripe Avocado</th>
-          </tr>
-          <tr>
-            <th>SR</th>
-            <th>OI</th>
-            <th>Time</th>
-            <th>SR</th>
-            <th>OI</th>
-            <th>Time</th>
-            <th>SR</th>
-            <th>OI</th>
-            <th>Time</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>CaP</td>
-            <td><strong>10/10</strong></td>
-            <td>3</td>
-            <td>75.51 +/- 4 s</td>
-            <td>2/10</td>
-            <td><strong>2.5</strong></td>
-            <td><strong>71.71 +/- 20 s</strong></td>
-            <td>1/10</td>
-            <td><strong>1</strong></td>
-            <td><strong>26.38 +/- 0 s</strong></td>
-          </tr>
-          <tr>
-            <td>CaP+PhysX</td>
-            <td><strong>10/10</strong></td>
-            <td>2.7</td>
-            <td>76.91 +/- 21 s</td>
-            <td>7/10</td>
-            <td>3.9</td>
-            <td>268.08 +/- 16 s</td>
-            <td><strong>9/10</strong></td>
-            <td>4</td>
-            <td>515.61 +/- 9 s</td>
-          </tr>
-          <tr>
-            <td>CaP+PhysX+Planner</td>
-            <td>9/10</td>
-            <td>3</td>
-            <td>104.11 +/- 26 s</td>
-            <td>7/10</td>
-            <td>4</td>
-            <td>274.14 +/- 77 s</td>
-            <td>8/10</td>
-            <td>4.125</td>
-            <td>563.29 +/- 76 s</td>
-          </tr>
-          <tr>
-            <td>PhysCaP-joint</td>
-            <td>8/10</td>
-            <td>2.125</td>
-            <td>65.91 +/- 23 s</td>
-            <td>7/10</td>
-            <td>2.7</td>
-            <td>241.62 +/- 70 s</td>
-            <td>7/10</td>
-            <td>2.71</td>
-            <td>384.39 +/- 111 s</td>
-          </tr>
-          <tr class="highlight-row">
-            <td>PhysCaP</td>
-            <td>9/10</td>
-            <td><strong>1.33</strong></td>
-            <td><strong>40.48 +/- 15 s</strong></td>
-            <td><strong>8/10</strong></td>
-            <td><strong>2.5</strong></td>
-            <td>239.0 +/- 27 s</td>
-            <td><strong>9/10</strong></td>
-            <td>2</td>
-            <td>300.47 +/- 53 s</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <p class="table-note">SR: success rate. OI: average number of exploratory object interactions on successful trials. Time: robot execution time.</p>
-  </div>
-</section>
-<!-- End quantitative results -->
-
-<!-- Qualitative results -->
-<section class="section hero is-light project-section" id="qualitative-results">
-  <div class="container is-max-desktop">
-    <h2 class="title is-3 has-text-centered">Qualitative Results</h2>
-
-    <div class="demo-subsection">
-      <span class="task-kicker">Real World</span>
-      <h3>Task Demonstrations</h3>
-      <p class="demo-subsection-note">Real-world videos are clipped to highlight the task-relevant interaction sequence.</p>
-    </div>
-
-    <div class="demo-task-grid">
-      <article class="demo-card" data-demo-card>
-        <div class="demo-card-header">
-          <div>
-            <span class="task-kicker">Task 1</span>
-            <h3>Find Cube Under Cup</h3>
-          </div>
-          <label class="demo-select-label">
-            <span>Method</span>
-            <select data-demo-select>
-              <option value="cubes-ours" data-method="PhysCaP" data-video="static/videos/cubes_05_ours_trial_07_cliped.mp4" data-code="static/codes/cubes_05_ours_code.py">PhysCaP</option>
-              <option value="cubes-cap" data-method="CaP" data-video="static/videos/cubes_01_capx_trial_07_cliped.mp4" data-code="static/codes/cubes_01_capx_code.py">CaP</option>
-              <option value="cubes-physx" data-method="CaP+PhysX" data-video="static/videos/cubes_02_phyX_trial_03_cliped.mp4" data-code="static/codes/cubes_02_phyX_code.py">CaP+PhysX</option>
-              <option value="cubes-planner" data-method="CaP+PhysX+Planner" data-video="static/videos/cubes_03_planner_trial_09_cliped.mp4" data-code="static/codes/cubes_03_planner_code.py">CaP+PhysX+Planner</option>
-              <option value="cubes-joint" data-method="PhysCaP-joint" data-video="static/videos/cubes_04_joint_trial_10_cliped.mp4" data-code="static/codes/cubes_04_joint_code.py">PhysCaP-joint</option>
-            </select>
-          </label>
-        </div>
-        <div class="demo-preview">
-          <video controls playsinline preload="metadata" data-demo-video>
-            <source src="static/videos/cubes_05_ours_trial_07_cliped.mp4" type="video/mp4">
-          </video>
-        </div>
-        <div class="demo-card-footer">
-          <p>Reveal the hidden blue cube by selecting and lifting candidate cups.</p>
-          <button class="demo-code-link" type="button" data-code-link data-demo-open>
-            <i class="fas fa-info-circle"></i>
-            <span>View detail</span>
-          </button>
-        </div>
-      </article>
-
-      <article class="demo-card" data-demo-card>
-        <div class="demo-card-header">
-          <div>
-            <span class="task-kicker">Task 2</span>
-            <h3>Identify Empty Can</h3>
-          </div>
-          <label class="demo-select-label">
-            <span>Method</span>
-            <select data-demo-select>
-              <option value="can-ours" data-method="PhysCaP" data-video="static/videos/can_05_ours_cliped.mp4" data-code="static/codes/can_05_ours_code.py">PhysCaP</option>
-              <option value="can-cap" data-method="CaP" data-video="static/videos/can_01_capx_trial_09_cliped.mp4" data-code="static/codes/can_01_capx_code.py">CaP</option>
-              <option value="can-physx" data-method="CaP+PhysX" data-video="static/videos/can_02_planner_trial_09_cliped.mp4" data-code="static/codes/can_02_planner_code.py">CaP+PhysX</option>
-              <option value="can-planner" data-method="CaP+PhysX+Planner" data-video="static/videos/can_03_planner_trial_03_cliped.mp4" data-code="static/codes/can_03_planner_code.py">CaP+PhysX+Planner</option>
-              <option value="can-joint" data-method="PhysCaP-joint" data-video="static/videos/can_04_joint_trial_07_cliped.mp4" data-code="static/codes/can_07_joint_code.py">PhysCaP-joint</option>
-            </select>
-          </label>
-        </div>
-        <div class="demo-preview">
-          <video controls playsinline preload="metadata" data-demo-video>
-            <source src="static/videos/can_05_ours_cliped.mp4" type="video/mp4">
-          </video>
-        </div>
-        <div class="demo-card-footer">
-          <p>Use mass measurements to find the empty can among visually similar cans.</p>
-          <button class="demo-code-link" type="button" data-code-link data-demo-open>
-            <i class="fas fa-info-circle"></i>
-            <span>View detail</span>
-          </button>
-        </div>
-      </article>
-
-      <article class="demo-card" data-demo-card>
-        <div class="demo-card-header">
-          <div>
-            <span class="task-kicker">Task 3</span>
-            <h3>Find Ripe Avocado</h3>
-          </div>
-          <label class="demo-select-label">
-            <span>Method</span>
-            <select data-demo-select>
-              <option value="avo-ours" data-method="PhysCaP" data-video="static/videos/avo_05_ours_trial_10_cliped.mp4" data-code="static/codes/avo_05_ours_code.py">PhysCaP</option>
-              <option value="avo-cap" data-method="CaP" data-video="static/videos/avo_01_capx_trial_02_cliped.mp4" data-code="static/codes/avo_01_capx_code.py">CaP</option>
-              <option value="avo-physx" data-method="CaP+PhysX" data-video="static/videos/avo_02_phyx_trial_16_cliped.mp4" data-code="static/codes/avo_02_phyx_code.py">CaP+PhysX</option>
-              <option value="avo-planner" data-method="CaP+PhysX+Planner" data-video="static/videos/avo_03_planner_trial_10_cliped.mp4" data-code="static/codes/avo_03_planner_code.py">CaP+PhysX+Planner</option>
-              <option value="avo-joint" data-method="PhysCaP-joint" data-video="static/videos/avo_04_joint_trial_0529_04_cliped.mp4" data-code="static/codes/avo_04_joint_code.py">PhysCaP-joint</option>
-            </select>
-          </label>
-        </div>
-        <div class="demo-preview">
-          <video controls playsinline preload="metadata" data-demo-video>
-            <source src="static/videos/avo_05_ours_trial_10_cliped.mp4" type="video/mp4">
-          </video>
-        </div>
-        <div class="demo-card-footer">
-          <p>Probe avocado stiffness and select the ripe candidate.</p>
-          <button class="demo-code-link" type="button" data-code-link data-demo-open>
-            <i class="fas fa-info-circle"></i>
-            <span>View detail</span>
-          </button>
-        </div>
-      </article>
-
-    </div>
-
-    <div class="demo-subsection demo-subsection--simulation">
-      <span class="task-kicker">Simulation</span>
-      <h3>LIBERO Task</h3>
-    </div>
-    <div class="simulation-demo-grid">
-      <article class="simulation-demo-card">
-        <video controls playsinline preload="metadata">
-          <source src="static/videos/sim_full.mp4" type="video/mp4">
-        </video>
-        <div>
-          <span class="task-kicker">PhysCaP</span>
-          <h3>PhysCaP</h3>
-          <p>Evaluate the complete simulation pipeline on hidden-property reasoning.</p>
-        </div>
-      </article>
-      <article class="simulation-demo-card">
-        <video controls playsinline preload="metadata">
-          <source src="static/videos/sim_none.mp4" type="video/mp4">
-        </video>
-        <div>
-          <span class="task-kicker">CaP+PhysX</span>
-          <h3>CaP+PhysX</h3>
-          <p>Run the simulated empty-can task with physical property extraction but no planner-guided exploration.</p>
-        </div>
-      </article>
-      <article class="simulation-demo-card">
-        <video controls playsinline preload="metadata">
-          <source src="static/videos/sim_explorer.mp4" type="video/mp4">
-        </video>
-        <div>
-          <span class="task-kicker">CaP+PhysX+Planner</span>
-          <h3>CaP+PhysX+Planner</h3>
-          <p>Use planner-guided physical exploration for the simulated empty-can task.</p>
-        </div>
-      </article>
-    </div>
-
-    <div class="simulation-baseline-grid">
-      <article class="simulation-baseline-card">
-        <video controls playsinline preload="metadata">
-          <source src="static/videos/openVLA_fail.mp4" type="video/mp4">
-        </video>
-        <div>
-          <span class="task-kicker">Baseline</span>
-          <h3>OpenVLA Failure</h3>
-        </div>
-      </article>
-      <article class="simulation-baseline-card">
-        <video controls playsinline preload="metadata">
-          <source src="static/videos/pi05_fail.mp4" type="video/mp4">
-        </video>
-        <div>
-          <span class="task-kicker">Baseline</span>
-          <h3>Pi-0.5 Failure</h3>
-        </div>
-      </article>
-      <article class="simulation-baseline-card">
-        <video controls playsinline preload="metadata">
-          <source src="static/videos/molmoact2_fail.mp4" type="video/mp4">
-        </video>
-        <div>
-          <span class="task-kicker">Baseline</span>
-          <h3>MolmoAct-2 Failure</h3>
-        </div>
-      </article>
-      <article class="simulation-baseline-card">
-        <video controls playsinline preload="metadata">
-          <source src="static/videos/molmoact2_succ.mp4" type="video/mp4">
-        </video>
-        <div>
-          <span class="task-kicker">Baseline</span>
-          <h3>MolmoAct-2 Success</h3>
-        </div>
-      </article>
-    </div>
-  </div>
-
-  <div class="demo-modal" id="demoModal" hidden aria-hidden="true">
-    <div class="demo-modal-backdrop" data-demo-close></div>
-    <div class="demo-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="demoModalTitle">
-      <div class="demo-modal-header">
-        <div>
-          <span class="task-kicker" id="demoModalMethod">Method</span>
-          <h3 id="demoModalTitle">Task Video</h3>
-        </div>
-        <button class="demo-modal-close" type="button" data-demo-close aria-label="Close video and code viewer">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-      <div class="demo-modal-grid">
-        <video class="demo-modal-video" controls playsinline data-modal-video></video>
-        <div class="demo-code-pane">
-          <div class="demo-code-toolbar">
-            <span>Generated Code</span>
-            <a href="static/codes/cubes_01_capx_code.py" target="_blank" rel="noopener" data-modal-code-link>Open raw</a>
-          </div>
-          <pre class="demo-code-block" tabindex="0" data-modal-code-block><code></code></pre>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-<!-- End qualitative results -->
-
-</main>
-
-  <footer class="footer">
+<!-- ===================== Method ===================== -->
+<section class="block" id="method" data-nav="Method">
   <div class="container">
-    <div class="columns is-centered">
-      <div class="column is-8">
-        <div class="content">
+    <h2 class="section-title">Method</h2>
+    <p class="narrow lead">
+      PhysCaP targets manipulation tasks where success depends on latent physical properties that cannot be seen and
+      no dedicated sensing hardware is available. It actively interacts with objects to acquire the missing information,
+      and once sufficient evidence is collected, it uses the measured properties to synthesize a more informed plan.
+    </p>
 
-          <p>
-            This page was built using the <a href="https://github.com/eliahuhorwitz/Academic-project-page-template" target="_blank">Academic Project Page Template</a> which was adopted from the <a href="https://nerfies.github.io" target="_blank">Nerfies</a> project page.
-            You are free to borrow the source code of this website, we just ask that you link back to this page in the footer. <br> This website is licensed under a <a rel="license"  href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">Creative
-            Commons Attribution-ShareAlike 4.0 International License</a>.
-          </p>
+    <div class="method-hint"><span class="dot"></span>Click a module in the figure for more information</div>
+    <div class="method-scroller">
+      <div class="method-stage" id="method-stage" style="--fig-ratio: 2425 / 607">
+        <img src="static/images/main_figure.png" alt="Overview of PhysCaP: Planner, Prioritizer and Coding Agent with PhysX modules and system belief" width="2425" height="607">
+        <svg class="focus-layer" viewBox="0 0 100 25.031" preserveAspectRatio="none" aria-hidden="true">
+          <defs>
+            <mask id="mask-task">
+              <rect x="0" y="0" width="100" height="25.030927835051546" fill="white"/>
+              <rect x="0.3" y="1.7521649484536084" width="16.6" height="11.389072164948454" rx="0.6" fill="black"/>
+            </mask>
+            <mask id="mask-planner">
+              <rect x="0" y="0" width="100" height="25.030927835051546" fill="white"/>
+              <rect x="18.9" y="0.37546391752577324" width="16.2" height="23.77938144329897" rx="0.6" fill="black"/>
+            </mask>
+            <mask id="mask-prioritizer">
+              <rect x="0" y="0" width="100" height="25.030927835051546" fill="white"/>
+              <rect x="35.2" y="2.152659793814433" width="17.8" height="22.00218556701031" rx="0.6" fill="black"/>
+            </mask>
+            <mask id="mask-coding">
+              <rect x="0" y="0" width="100" height="25.030927835051546" fill="white"/>
+              <rect x="53.1" y="4.255257731958763" width="16.3" height="19.649278350515466" rx="0.6" fill="black"/>
+            </mask>
+            <mask id="mask-belief">
+              <rect x="0" y="0" width="100" height="25.030927835051546" fill="white"/>
+              <rect x="69.2" y="6.007422680412372" width="5.6" height="9.38659793814433" rx="0.6" fill="black"/>
+            </mask>
+            <mask id="mask-apis">
+              <rect x="0" y="0" width="100" height="25.030927835051546" fill="white"/>
+              <rect x="74.5" y="2.7534020618556703" width="11.0" height="10.387835051546393" rx="0.6" fill="black"/>
+            </mask>
+            <mask id="mask-physx">
+              <rect x="0" y="0" width="100" height="25.030927835051546" fill="white"/>
+              <rect x="85.6" y="0.8760824742268042" width="14.2" height="12.265154639175258" rx="0.6" fill="black"/>
+            </mask>
+            <mask id="mask-execute">
+              <rect x="0" y="0" width="100" height="25.030927835051546" fill="white"/>
+              <rect x="70.3" y="15.519175257731959" width="11.5" height="8.510515463917526" rx="0.6" fill="black"/>
+            </mask>
+            <mask id="mask-result">
+              <rect x="0" y="0" width="100" height="25.030927835051546" fill="white"/>
+              <rect x="82.6" y="13.26639175257732" width="17.3" height="11.514226804123712" rx="0.6" fill="black"/>
+            </mask>
+            <mask id="mask-agnostic">
+              <rect x="0" y="0" width="100" height="25.030927835051546" fill="white"/>
+              <rect x="0.8" y="13.892164948453608" width="16.2" height="9.762061855670103" rx="0.6" fill="black"/>
+            </mask>
+          </defs>
+          <g class="focus" data-focus="task">
+            <rect class="focus-dim" x="0" y="0" width="100" height="25.030927835051546" mask="url(#mask-task)"/>
+            <rect class="focus-outline" x="0.3" y="1.7521649484536084" width="16.6" height="11.389072164948454" rx="0.6"/>
+          </g>
+          <g class="focus" data-focus="planner">
+            <rect class="focus-dim" x="0" y="0" width="100" height="25.030927835051546" mask="url(#mask-planner)"/>
+            <rect class="focus-outline" x="18.9" y="0.37546391752577324" width="16.2" height="23.77938144329897" rx="0.6"/>
+          </g>
+          <g class="focus" data-focus="prioritizer">
+            <rect class="focus-dim" x="0" y="0" width="100" height="25.030927835051546" mask="url(#mask-prioritizer)"/>
+            <rect class="focus-outline" x="35.2" y="2.152659793814433" width="17.8" height="22.00218556701031" rx="0.6"/>
+          </g>
+          <g class="focus" data-focus="coding">
+            <rect class="focus-dim" x="0" y="0" width="100" height="25.030927835051546" mask="url(#mask-coding)"/>
+            <rect class="focus-outline" x="53.1" y="4.255257731958763" width="16.3" height="19.649278350515466" rx="0.6"/>
+          </g>
+          <g class="focus" data-focus="belief">
+            <rect class="focus-dim" x="0" y="0" width="100" height="25.030927835051546" mask="url(#mask-belief)"/>
+            <rect class="focus-outline" x="69.2" y="6.007422680412372" width="5.6" height="9.38659793814433" rx="0.6"/>
+          </g>
+          <g class="focus" data-focus="apis">
+            <rect class="focus-dim" x="0" y="0" width="100" height="25.030927835051546" mask="url(#mask-apis)"/>
+            <rect class="focus-outline" x="74.5" y="2.7534020618556703" width="11.0" height="10.387835051546393" rx="0.6"/>
+          </g>
+          <g class="focus" data-focus="physx">
+            <rect class="focus-dim" x="0" y="0" width="100" height="25.030927835051546" mask="url(#mask-physx)"/>
+            <rect class="focus-outline" x="85.6" y="0.8760824742268042" width="14.2" height="12.265154639175258" rx="0.6"/>
+          </g>
+          <g class="focus" data-focus="execute">
+            <rect class="focus-dim" x="0" y="0" width="100" height="25.030927835051546" mask="url(#mask-execute)"/>
+            <rect class="focus-outline" x="70.3" y="15.519175257731959" width="11.5" height="8.510515463917526" rx="0.6"/>
+          </g>
+          <g class="focus" data-focus="result">
+            <rect class="focus-dim" x="0" y="0" width="100" height="25.030927835051546" mask="url(#mask-result)"/>
+            <rect class="focus-outline" x="82.6" y="13.26639175257732" width="17.3" height="11.514226804123712" rx="0.6"/>
+          </g>
+          <g class="focus" data-focus="agnostic">
+            <rect class="focus-dim" x="0" y="0" width="100" height="25.030927835051546" mask="url(#mask-agnostic)"/>
+            <rect class="focus-outline" x="0.8" y="13.892164948453608" width="16.2" height="9.762061855670103" rx="0.6"/>
+          </g>
+        </svg>
+        <button class="hotspot" data-module="task" aria-label="Task and scene"
+                style="left:0.3%; top:7.0%; width:16.6%; height:45.5%"></button>
+        <button class="hotspot" data-module="planner" aria-label="Planner Agent"
+                style="left:18.9%; top:1.5%; width:16.2%; height:95.0%"></button>
+        <button class="hotspot" data-module="prioritizer" aria-label="Prioritizer Agent"
+                style="left:35.2%; top:8.6%; width:17.8%; height:87.9%"></button>
+        <button class="hotspot" data-module="coding" aria-label="Coding Agent"
+                style="left:53.1%; top:17.0%; width:16.3%; height:78.5%"></button>
+        <button class="hotspot" data-module="belief" aria-label="System belief"
+                style="left:69.2%; top:24.0%; width:5.6%; height:37.5%"></button>
+        <button class="hotspot" data-module="apis" aria-label="Low-level robot control"
+                style="left:74.5%; top:11.0%; width:11.0%; height:41.5%"></button>
+        <button class="hotspot" data-module="physx" aria-label="Physical property extraction (PhysX) modules"
+                style="left:85.6%; top:3.5%; width:14.2%; height:49.0%"></button>
+        <button class="hotspot" data-module="execute" aria-label="Executing the task"
+                style="left:70.3%; top:62.0%; width:11.5%; height:34.0%"></button>
+        <button class="hotspot" data-module="result" aria-label="Task completed"
+                style="left:82.6%; top:53.0%; width:17.3%; height:46.0%"></button>
+        <button class="hotspot" data-module="agnostic" aria-label="Model-agnostic agents"
+                style="left:0.8%; top:55.5%; width:16.2%; height:39.0%"></button>
+      </div>
+    </div>
 
+    <div class="module-tabs" role="tablist">
+<button class="module-tab" role="tab" data-module="task">Task input</button><button class="module-tab" role="tab" data-module="planner">1. Planner</button><button class="module-tab" role="tab" data-module="prioritizer">2. Prioritizer</button><button class="module-tab" role="tab" data-module="coding">3. Coding Agent</button><button class="module-tab" role="tab" data-module="belief">Belief Storage</button><button class="module-tab" role="tab" data-module="apis">Control & perception APIs</button><button class="module-tab" role="tab" data-module="physx">PhysX modules</button><button class="module-tab" role="tab" data-module="execute">Final program</button><button class="module-tab" role="tab" data-module="result">Result</button><button class="module-tab" role="tab" data-module="agnostic">Model-agnostic</button>    </div>
+    <div class="module-panel" id="module-panel" aria-live="polite">
+      <p class="default" data-default>Overview of PhysCaP. Given a task requiring latent physical information, the Planner identifies what information is missing from the visual scene and proposes an initial exploration plan. The Prioritizer then refines this plan by filtering implausible actions and reducing redundant exploration. Finally, a code-generation agent produces executable programs that invoke the PhysX modules (<code>get_mass</code>, <code>get_stiffness</code>) to actively measure the properties. The measurements update the system belief, which the Planner consults to decide whether to explore further or execute the task.</p>
+      <div data-module-text="task" hidden>
+        <div class="kicker">Task input</div>
+        <h4>Task and scene</h4>
+<p>The agent receives a task in natural language, such as <i>“Find the empty can.”</i>, together with an image of the scene from a ZED 2i depth camera.</p><p>Success depends on latent physical properties, such as mass or stiffness, that cannot be seen in the image.</p>      </div>
+      <div data-module-text="planner" hidden>
+        <div class="kicker">1. Planner</div>
+        <h4>Planner Agent</h4>
+<p>Given the task and the visual scene, the Planner assesses whether the current observations suffice for reliable task execution. If not, it identifies the missing physical information and triggers targeted exploration, proposing candidate interactions.</p><p>After each measurement it consults the system belief. It stops exploration once sufficient evidence has been gathered and invokes the code-generation agent, so the agent avoids <i>over-exploration</i>.</p>      </div>
+      <div data-module-text="prioritizer" hidden>
+        <div class="kicker">2. Prioritizer</div>
+        <h4>Prioritizer Agent</h4>
+<p>The Prioritizer refines the Planner’s candidate list. Using visual heuristics, it filters out implausible or redundant interactions and ranks the rest by a priority score, with a brief reason for each score.</p><p>For example, an opened can (with a straw) is more likely to be empty than a sealed one, and a dark avocado is more likely to be ripe than a green one, so these are measured first.</p>      </div>
+      <div data-module-text="coding" hidden>
+        <div class="kicker">3. Coding Agent</div>
+        <h4>Coding Agent</h4>
+<p>The code-generation agent writes executable Python programs that call the physical property extraction (PhysX) modules, <code>get_mass</code> and <code>get_stiffness</code>, together with the low-level control APIs.</p><p>Each program measures the next prioritized candidate and returns the measurement, for example 208 g for a full can and 15 g for the empty one.</p>      </div>
+      <div data-module-text="belief" hidden>
+        <div class="kicker">Belief Storage</div>
+        <h4>System belief</h4>
+<p>The measurements update the system belief, which keeps the information gathered so far.</p><p>The Planner consults it to decide whether to explore further or to execute the task. Keeping earlier measurements matters most in the longer-horizon Pack Grocery Bag task.</p>      </div>
+      <div data-module-text="apis" hidden>
+        <div class="kicker">Control & perception APIs</div>
+        <h4>Low-level robot control</h4>
+<p>Built on CaP-Agent0, the system provides modular control APIs, including <code>get_object_pose</code>, <code>goto_pose</code>, <code>open_gripper</code>, and <code>close_gripper</code>.</p><p>Object poses come from Molmo2 object localization and ZED 2i depth estimation. Because these APIs separate high-level reasoning from low-level control, they can be mapped to other robot platforms.</p>      </div>
+      <div data-module-text="physx" hidden>
+        <div class="kicker">PhysX modules</div>
+        <h4>Physical property extraction (PhysX) modules</h4>
+<p><b><code>get_mass</code></b> lifts the object 15 cm and compares joint torques with and without the object. The torque difference gives the object’s mass.</p><p><b><code>get_stiffness</code></b> closes the gripper in small steps, records gripper jaw displacement and force, and fits a stiffness value that is mapped to five levels, from Ultra-Soft (1) to Rigid (5).</p><p>Both are training-free and use only robot proprioception and a standard gripper, with no tactile sensors.</p>      </div>
+      <div data-module-text="execute" hidden>
+        <div class="kicker">Final program</div>
+        <h4>Executing the task</h4>
+<p>Once the Planner decides the evidence is sufficient, the coding agent synthesizes a more informed code policy, here picking up the empty can and placing it on the wooden tray.</p>      </div>
+      <div data-module-text="result" hidden>
+        <div class="kicker">Result</div>
+        <h4>Task completed</h4>
+<p>The robot completes the task, grounded by the physical measurements: “Empty can found!”</p>      </div>
+      <div data-module-text="agnostic" hidden>
+        <div class="kicker">Model-agnostic</div>
+        <h4>Model-agnostic agents</h4>
+<p>All agents use Gemini 3.1 Pro by default, but the framework does not depend on one model. We also ran Identify Empty Can with Claude Fable 5 and GPT-6 Astra as the backbone (see <a href="#results" data-open-tab="res-backbone">Results</a>).</p>      </div>
+    </div>
+
+
+    <div class="pillars">
+      <p class="narrow lead center">PhysCaP addresses two complementary problems: how to obtain physical information, and how to acquire only what is useful.</p>
+      <div class="pillar-grid">
+        <a class="pillar" href="#physx">
+          <span class="pillar-icon"><i class="fa-solid fa-weight-hanging"></i></span>
+          <span class="pillar-kicker">Physical grounding &rarr; capability</span>
+          <span class="pillar-title">PhysX modules</span>
+          <span class="pillar-text">The robot measures latent properties, mass and stiffness, by interacting with objects. This gives the agent information that a vision-only agent cannot see. <b>Physical sensing provides capability.</b></span>
+        </a>
+        <a class="pillar" href="#agents">
+          <span class="pillar-icon"><i class="fa-solid fa-bullseye"></i></span>
+          <span class="pillar-kicker">Targeted exploration &rarr; efficiency</span>
+          <span class="pillar-title">Planner and Prioritizer</span>
+          <span class="pillar-text">The Planner decides when to explore and when to stop; the Prioritizer decides which object to interact with next. The agent acquires only the information it needs. <b>Targeted exploration provides efficiency.</b></span>
+        </a>
+      </div>
+    </div>
+
+    <!-- PhysX: a group of its own (video order: PhysX first, then the agents) -->
+    <div class="subsection" id="physx">
+      <h3 class="sub-title">PhysX: Physical Property Extraction Modules</h3>
+      <p class="narrow lead">
+        VLMs cannot reliably infer hidden physical properties from visual observations alone, and incorrect estimates
+        propagate to later reasoning and planning. PhysCaP therefore lets the robot interact with objects to measure
+        them. The two PhysX modules are training-free and use only robot proprioception and a standard
+        gripper, with no tactile sensors or other added hardware.
+      </p>
+      <div class="grid-2 physx-grid">
+        <div class="card physx-card">
+          <div class="video-frame"><video autoplay muted loop playsinline preload="none" poster="static/videos/physx_mass.jpg"><source src="static/videos/physx_mass.mp4" type="video/mp4"></video></div>
+          <h4>Object mass: <code>get_mass</code></h4>
+          <p>The robot executes a fixed lift trajectory, raising the end-effector 15 cm. It records joint torques first with an empty grasp and then while holding the object. The torque difference \(\Delta\tau = \tau_{\mathrm{loaded}} - \tau_{\mathrm{empty}}\) isolates the object's gravitational contribution:</p>
+          <div class="formula">\( \hat{m} = \dfrac{J_z \cdot \Delta\tau}{g\,\lVert J_z \rVert^2} \)</div>
+          <p class="small muted">\(J_z\): end-effector Jacobian projected onto the vertical direction. The estimate does not depend on where the object was placed. Returns the mass in kilograms (about &plusmn;30 g noise); a large negative value means the grasp failed, and NaN means no reading was taken.</p>
+        </div>
+        <div class="card physx-card">
+          <div class="video-frame"><video autoplay muted loop playsinline preload="none" poster="static/videos/physx_stiffness.jpg"><source src="static/videos/physx_stiffness.mp4" type="video/mp4"></video></div>
+          <h4>Object stiffness: <code>get_stiffness</code></h4>
+          <p>The gripper closes in fine increments until contact, confirmed by a brief backoff test. It then keeps closing while recording jaw displacement \(d\) and gripper force \(F\) up to a target force, and fits a stiffness coefficient by least squares:</p>
+          <div class="formula">\( k = \dfrac{\Delta F}{\Delta d} \)</div>
+          <p class="small muted">Mapped to five levels, from Ultra-Soft (1) to Rigid (5). Each object is measured five times and the final level is a majority vote.</p>
+        </div>
+      </div>
+      <div class="actions center-actions"><button class="link-btn" data-code="api_physx.md" data-title="PhysX API"><i class="fa-solid fa-code"></i> PhysX API</button></div>
+    </div>
+
+    <!-- Agent structure -->
+    <div class="subsection" id="agents">
+      <h3 class="sub-title">Agent Structure</h3>
+      <p class="narrow lead">
+        Measuring takes time, so the agent must balance acting with insufficient information against the cost of
+        unnecessary interactions. PhysCaP splits this decision across separate agents: the Planner decides
+        <i>when</i> to explore and when to stop, the Prioritizer decides <i>what</i> to interact with next, and the
+        Coding Agent turns each decision into executable code.
+      </p>
+<!-- Agent structure animation (Identify Empty Can). Art follows the framework figure.
+     Data: candidate list and priority scores from the paper's example outputs (CoRL appendix);
+     masses 208 g / 15 g from the framework figure; empty if below 0.1 kg (task prompt). -->
+<div class="aa" id="agent-anim">
+  <div class="aa-stage" id="aa-stage">
+    <div class="aa-grid">
+      <div class="aa-panel aa-task" data-panel="task">
+        <div class="aa-say aa-user" id="aa-task-say"><i class="fa-solid fa-user"></i><span>Find the empty can.</span></div>
+        <img class="aa-photo" src="static/images/anim_scene.jpg" alt="Four cans and a wooden tray on the table">
+        <div class="aa-io">Input: task + camera image</div>
+      </div>
+
+      <div class="aa-panel aa-planner" data-panel="planner">
+        <div class="aa-title">1. Planner Agent</div>
+        <p class="aa-quote">&ldquo;What do I need to know?&rdquo;</p>
+        <div class="aa-label">Current candidates:</div>
+        <div class="aa-cans" id="aa-cands">
+          <img data-can="blue" src="static/images/can_blue.png" alt="blue can">
+          <img data-can="black" src="static/images/can_black.png" alt="black can">
+          <img data-can="green" src="static/images/can_green.png" alt="green can">
+          <img data-can="red" src="static/images/can_red.png" alt="red can">
+        </div>
+        <div class="aa-bubble" id="aa-planner-say"></div>
+      </div>
+
+      <div class="aa-panel aa-prior" data-panel="prioritizer">
+        <div class="aa-title">2. Prioritizer Agent</div>
+        <p class="aa-quote">&ldquo;Wait, is there a better way?&rdquo;</p>
+        <ol class="aa-rank" id="aa-rank">
+          <li data-can="blue" data-score="2"><img src="static/images/can_blue.png" alt=""><span class="aa-score">2</span><span class="aa-why">appears unopened, very unlikely to be empty</span></li>
+          <li data-can="black" data-score="1"><img src="static/images/can_black.png" alt=""><span class="aa-score">1</span><span class="aa-why">appears unopened, lowest priority</span></li>
+          <li data-can="green" data-score="10"><img src="static/images/can_green.png" alt=""><span class="aa-score">10</span><span class="aa-why">has a straw, so it is open: more likely empty</span></li>
+          <li data-can="red" data-score="9"><img src="static/images/can_red.png" alt=""><span class="aa-score">9</span><span class="aa-why">also has a straw: highly likely empty</span></li>
+        </ol>
+        <div class="aa-bubble" id="aa-prior-say"></div>
+      </div>
+
+      <div class="aa-panel aa-code" data-panel="coding">
+        <div class="aa-title">3. Coding Agent</div>
+        <pre class="aa-codebox"><code id="aa-code"></code></pre>
+        <div class="aa-result" id="aa-result"></div>
+      </div>
+
+      <div class="aa-panel aa-belief" data-panel="belief">
+        <div class="aa-belief-head"><i class="fa-solid fa-database"></i> Belief Storage</div>
+        <ul id="aa-belief"><li class="aa-empty">no measurements yet</li></ul>
+      </div>
+
+      <div class="aa-panel aa-done" data-panel="result">
+        <div class="aa-say aa-robot"><i class="fa-solid fa-robot"></i><span>Empty can found!</span></div>
+        <img class="aa-photo" src="static/images/anim_result.jpg" alt="The robot placing the red can on the tray">
+        <div class="aa-io">Output: code policy executed</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="aa-controls">
+    <button class="aa-btn" data-aa="prev" aria-label="Previous step"><i class="fa-solid fa-backward-step"></i></button>
+    <button class="aa-btn aa-play" data-aa="play" aria-label="Play or pause"><i class="fa-solid fa-pause"></i></button>
+    <button class="aa-btn" data-aa="next" aria-label="Next step"><i class="fa-solid fa-forward-step"></i></button>
+    <button class="aa-btn" data-aa="replay" aria-label="Replay from the start"><i class="fa-solid fa-rotate-left"></i></button>
+    <div class="aa-steps" id="aa-steps" role="tablist"></div>
+  </div>
+  <p class="aa-caption" id="aa-caption" aria-live="polite"></p>
+</div>      <div class="agent-grid">
+        <div class="card agent-card">
+          <span class="agent-num">1</span>
+          <h4>Planner Agent</h4>
+          <p class="agent-quote">&ldquo;What do I need to know?&rdquo;</p>
+          <p>Given the task and the visual scene, the Planner assesses whether the current observations suffice. If not, it identifies the missing physical information and triggers targeted exploration, proposing candidate interactions.</p>
+          <p>After each measurement it checks the system belief. It stops exploration once there is sufficient evidence and invokes the Coding Agent, avoiding <i>over-exploration</i>.</p>
+          <div class="actions"><button class="link-btn" data-code="prompt_planner.md" data-title="Prompt"><i class="fa-regular fa-file-lines"></i> Prompt</button><button class="link-btn" data-code="output_planner_example.md" data-title="Example output"><i class="fa-regular fa-file-lines"></i> Example output</button></div>
+        </div>
+        <div class="card agent-card">
+          <span class="agent-num">2</span>
+          <h4>Prioritizer Agent</h4>
+          <p class="agent-quote">&ldquo;Wait, is there a better way?&rdquo;</p>
+          <p>The Prioritizer refines the Planner's candidates. Using visual heuristics, it filters out implausible or redundant interactions and ranks the rest by a priority score, with a brief reason for each score.</p>
+          <p>For example, it checks an opened can before a sealed one, and a dark avocado before a green one.</p>
+          <div class="actions"><button class="link-btn" data-code="prompt_prioritizer.md" data-title="Prompt"><i class="fa-regular fa-file-lines"></i> Prompt</button><button class="link-btn" data-code="output_prioritizer_example.md" data-title="Example output"><i class="fa-regular fa-file-lines"></i> Example output</button></div>
+        </div>
+        <div class="card agent-card">
+          <span class="agent-num">3</span>
+          <h4>Coding Agent</h4>
+          <p>The Coding Agent writes Python programs that call the PhysX modules and the low-level control APIs (<code>get_object_pose</code>, <code>goto_pose</code>, <code>open_gripper</code>, <code>close_gripper</code>).</p>
+          <p>Each measurement updates the system belief. Once the Planner decides the evidence is sufficient, the Coding Agent writes the final program that completes the task.</p>
+          <div class="actions"><button class="link-btn" data-code="prompt_coding_general.md" data-title="Prompt"><i class="fa-regular fa-file-lines"></i> Prompt</button><button class="link-btn" data-code="prompt_coding_candidate.md" data-title="Single-step prompt"><i class="fa-regular fa-file-lines"></i> Single-step prompt</button><button class="link-btn" data-code="prompt_coding_sufficient.md" data-title="Full-task prompt"><i class="fa-regular fa-file-lines"></i> Full-task prompt</button><button class="link-btn" data-code="api_low_level.md" data-title="Low-level API"><i class="fa-solid fa-code"></i> Low-level API</button></div>
+        </div>
+      </div>
+      <div class="callout">
+        <p><b>Why separate agents?</b> We also tried merging prioritization into the Planner prompt (<b>PhysCaP-joint</b>). A single call applied visual cues, such as a straw in a can, only in some trials and otherwise fell back to near-exhaustive exploration. A dedicated Prioritizer applies them more consistently (see <a href="#results" data-open-tab="res-real">Results</a>). <button class="link-btn" data-code="prompt_planner_joint.md" data-title="PhysCaP-joint prompt"><i class="fa-regular fa-file-lines"></i> PhysCaP-joint prompt</button></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== Tasks ===================== -->
+<section class="block alt" id="tasks" data-nav="Tasks">
+  <div class="container">
+    <h2 class="section-title">Tasks</h2>
+    <p class="narrow lead">
+      We evaluate on three partially observable real-world tabletop tasks with a 6-DoF AgileX PiPER arm and a ZED 2i
+      camera, and a simulated task in LIBERO. Each real-world task uses standardized
+      commercial objects and 3D-printed cubes so setups can be reproduced. Across trials we perturb object positions
+      and colors, vary the words used to describe the target, and randomly sample the hidden physical properties.
+    </p>
+    <div class="figure">
+      <img src="static/images/tasks.jpg" alt="Task setups with ground-truth mass and stiffness labels" loading="lazy">
+    </div>
+    <p class="caption"><b>Ground-truth physical properties</b> of the relevant target objects are annotated in each task setup, with mass (g) and/or stiffness level (1 to 5).</p>
+
+    <h3 class="center" style="margin-top:2.6rem">Click to see each task</h3>
+    <div class="task-selector" role="tablist" style="--n: 4">
+      <button class="task-button is-active" role="tab" data-task="can" aria-selected="true">Identify Empty Can<small>Task 1 · mass</small></button>
+      <button class="task-button" role="tab" data-task="avo" aria-selected="false">Pick Ripe Avocado<small>Task 2 · stiffness</small></button>
+      <button class="task-button" role="tab" data-task="gro" aria-selected="false">Pack Grocery Bag<small>Task 3 · mass + stiffness</small></button>
+      <button class="task-button" role="tab" data-task="sim" aria-selected="false">Identify Empty Can (LIBERO)<small>Simulation</small></button>
+    </div>
+
+    <div class="task-panel" data-task-panel="can" >
+      <div class="task-layout">
+        <div>
+          <div class="method-select" role="group" aria-label="Method">
+            <button class="" data-video="can_cap" data-speed="" data-code="code_can_cap.py" data-code-title="Identify Empty Can: code generated by CaP" title="Vision only. No physical exploration.">CaP</button>
+            <button class="" data-video="can_cap_physx" data-speed="" data-code="code_can_cap_physx.py" data-code-title="Identify Empty Can: code generated by CaP+PhysX" title="Adds the PhysX modules, but interacts with every object.">CaP+PhysX</button>
+            <button class="" data-video="can_cap_physx_planner" data-speed="" data-code="code_can_cap_physx_planner.py" data-code-title="Identify Empty Can: code generated by CaP+PhysX+Planner" title="Adds a Planner that decides when to stop; objects are still chosen in no particular order.">CaP+PhysX+Planner</button>
+            <button class="" data-video="can_physcap_joint" data-speed="" data-code="code_can_physcap_joint.py" data-code-title="Identify Empty Can: code generated by PhysCaP-joint" title="Planner and Prioritizer merged into one prompt.">PhysCaP-joint</button>
+            <button class="is-ours is-active" data-video="can_physcap" data-speed="" data-code="code_can_physcap.py" data-code-title="Identify Empty Can: code generated by PhysCaP (Ours)" title="Separate Planner and Prioritizer.">PhysCaP (Ours)</button>
+          </div>
+          <div class="video-frame">
+            <span class="speed-badge" hidden>None</span>
+            <video class="task-video" controls muted loop playsinline preload="none" poster="static/videos/can_physcap.jpg">
+              <source src="static/videos/can_physcap.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="video-meta"><span class="method-desc">Separate Planner and Prioritizer.</span></div>
+        </div>
+        <div>
+          <h3>Identify Empty Can</h3>
+          <div class="chips">
+            <span class="chip">Real world</span>
+<span class="chip"><code>get_mass</code></span>          </div>
+<p>The goal is to identify the single empty soda can among four cans and place it on a wooden tray. The scene contains two sealed cans and two open cans with inserted straws.</p><p>A sealed can is unlikely to be empty, so an effective agent should treat the two opened cans as the promising candidates and use <code>get_mass</code> to confirm which one is empty, rather than weighing every can on the table.</p>          <div class="actions">
+<button class="link-btn" data-code="prompt_task_can.md" data-title="Identify Empty Can: task prompt"><i class="fa-regular fa-file-lines"></i> Task prompt</button><button class="link-btn" data-code-current><i class="fa-solid fa-code"></i> Generated code (selected method)</button><button class="link-btn" data-code="code_can_physcap_paper.py" data-title="Identify Empty Can: PhysCaP code shown in the paper"><i class="fa-solid fa-code"></i> PhysCaP code (paper appendix)</button>          </div>
+        </div>
+      </div>
+      <details class="more">
+        <summary>Interaction trajectories compared across methods</summary>
+        <div class="inner">
+          <img src="static/images/qualitative_can.jpg" alt="Identify Empty Can: interaction trajectories for each method" loading="lazy">
+        </div>
+      </details>
+    </div>
+    <div class="task-panel" data-task-panel="avo" hidden>
+      <div class="task-layout">
+        <div>
+          <div class="method-select" role="group" aria-label="Method">
+            <button class="" data-video="avo_cap" data-speed="" data-code="code_avo_cap.py" data-code-title="Pick Ripe Avocado: code generated by CaP" title="Vision only. No physical exploration.">CaP</button>
+            <button class="" data-video="avo_cap_physx" data-speed="" data-code="code_avo_cap_physx.py" data-code-title="Pick Ripe Avocado: code generated by CaP+PhysX" title="Adds the PhysX modules, but interacts with every object.">CaP+PhysX</button>
+            <button class="" data-video="avo_cap_physx_planner" data-speed="" data-code="code_avo_cap_physx_planner.py" data-code-title="Pick Ripe Avocado: code generated by CaP+PhysX+Planner" title="Adds a Planner that decides when to stop; objects are still chosen in no particular order.">CaP+PhysX+Planner</button>
+            <button class="" data-video="avo_physcap_joint" data-speed="" data-code="code_avo_physcap_joint.py" data-code-title="Pick Ripe Avocado: code generated by PhysCaP-joint" title="Planner and Prioritizer merged into one prompt.">PhysCaP-joint</button>
+            <button class="is-ours is-active" data-video="avo_physcap" data-speed="" data-code="code_avo_physcap.py" data-code-title="Pick Ripe Avocado: code generated by PhysCaP (Ours)" title="Separate Planner and Prioritizer.">PhysCaP (Ours)</button>
+          </div>
+          <div class="video-frame">
+            <span class="speed-badge" hidden>None</span>
+            <video class="task-video" controls muted loop playsinline preload="none" poster="static/videos/avo_physcap.jpg">
+              <source src="static/videos/avo_physcap.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="video-meta"><span class="method-desc">Separate Planner and Prioritizer.</span></div>
+        </div>
+        <div>
+          <h3>Pick Ripe Avocado</h3>
+          <div class="chips">
+            <span class="chip">Real world</span>
+<span class="chip"><code>get_stiffness</code></span>          </div>
+<p>The goal is to identify the single ripe avocado among four and place it on a wooden tray. The scene contains two green avocados that are unripe and two dark avocados that both appear ripe, though only one is.</p><p>Since skin color cannot separate the two dark candidates, an effective agent should skip the green avocados and use <code>get_stiffness</code> to determine which of the two is actually ripe.</p>          <div class="actions">
+<button class="link-btn" data-code="prompt_task_avo.md" data-title="Pick Ripe Avocado: task prompt"><i class="fa-regular fa-file-lines"></i> Task prompt</button><button class="link-btn" data-code-current><i class="fa-solid fa-code"></i> Generated code (selected method)</button><button class="link-btn" data-code="code_avo_physcap_paper.py" data-title="Pick Ripe Avocado: PhysCaP code shown in the paper"><i class="fa-solid fa-code"></i> PhysCaP code (paper appendix)</button>          </div>
+        </div>
+      </div>
+      <details class="more">
+        <summary>Interaction trajectories compared across methods</summary>
+        <div class="inner">
+          <img src="static/images/qualitative_avo.jpg" alt="Pick Ripe Avocado: interaction trajectories for each method" loading="lazy">
+        </div>
+      </details>
+    </div>
+    <div class="task-panel" data-task-panel="gro" hidden>
+      <div class="task-layout">
+        <div>
+          <div class="method-select" role="group" aria-label="Method">
+            <button class="is-ours is-active" data-video="gro_physcap" data-speed="1.8× speed, waiting time removed" data-code="code_gro_physcap.py" data-code-title="Pack Grocery Bag: code generated by PhysCaP (Ours)" title="Separate Planner and Prioritizer.">PhysCaP (Ours)</button>
+          </div>
+          <div class="video-frame">
+            <span class="speed-badge" >1.8× speed, waiting time removed</span>
+            <video class="task-video" controls muted loop playsinline preload="none" poster="static/videos/gro_physcap.jpg">
+              <source src="static/videos/gro_physcap.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="video-meta"><span class="method-desc">Separate Planner and Prioritizer.</span></div>
+        </div>
+        <div>
+          <h3>Pack Grocery Bag</h3>
+          <div class="chips">
+            <span class="chip">Real world</span>
+<span class="chip"><code>get_mass</code></span><span class="chip"><code>get_stiffness</code></span>          </div>
+<p>The goal is to select a suitable item as the base of a grocery bag. The heavier and stiffer objects generally provide greater stacking stability.</p><p>Since the cubes look identical in shape, an agent cannot infer hidden mass and stiffness from vision alone; however, it would also not be ideal to test both properties for all cubes. An effective agent should eliminate two lighter candidates and only measure the stiffness of the heavier cubes after their mass has been measured.</p>          <div class="actions">
+<button class="link-btn" data-code="prompt_task_gro.md" data-title="Pack Grocery Bag: task prompt"><i class="fa-regular fa-file-lines"></i> Task prompt</button><button class="link-btn" data-code-current><i class="fa-solid fa-code"></i> Generated code (selected method)</button>          </div>
+        </div>
+      </div>
+      <details class="more">
+        <summary>Interaction trajectories compared across methods</summary>
+        <div class="inner">
+          <img src="static/images/qualitative_grocery.jpg" alt="Pack Grocery Bag: interaction trajectories for each method" loading="lazy">
+        </div>
+      </details>
+    </div>
+    <div class="task-panel" data-task-panel="sim" hidden>
+      <div class="task-layout">
+        <div>
+          <div class="method-select" role="group" aria-label="Method">
+            <button class="" data-video="libero_sim_none" data-speed="" data-code="" data-code-title="Identify Empty Can (LIBERO): code generated by CaP+PhysX" title="Adds the PhysX modules, but interacts with every object.">CaP+PhysX</button>
+            <button class="" data-video="libero_sim_explorer" data-speed="" data-code="" data-code-title="Identify Empty Can (LIBERO): code generated by CaP+PhysX+Planner" title="Adds a Planner that decides when to stop; objects are still chosen in no particular order.">CaP+PhysX+Planner</button>
+            <button class="is-ours is-active" data-video="libero_sim_full" data-speed="" data-code="" data-code-title="Identify Empty Can (LIBERO): code generated by PhysCaP (Ours)" title="Separate Planner and Prioritizer.">PhysCaP (Ours)</button>
+          </div>
+          <div class="video-frame">
+            <span class="speed-badge" hidden>None</span>
+            <video class="task-video" controls muted loop playsinline preload="none" poster="static/videos/libero_sim_full.jpg">
+              <source src="static/videos/libero_sim_full.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="video-meta"><span class="method-desc">Separate Planner and Prioritizer.</span></div>
+        </div>
+        <div>
+          <h3>Identify Empty Can (LIBERO)</h3>
+          <div class="chips">
+            <span class="chip">Simulation</span>
+<span class="chip"><code>get_mass</code></span>          </div>
+<p>We replicate the Identify Empty Can task in LIBERO. The scene contains four cups (one empty and three full) and a target basket, with randomized cup poses and perturbed object mass.</p><p>Mass is not directly observable: ground-truth mass is revealed only after the agent grasps a cup for at least 0.5 seconds and lifts it 3 cm above its reference height for 0.5 seconds.</p>          <div class="actions">
+<button class="link-btn" data-code="prompt_task_sim.md" data-title="Identify Empty Can (LIBERO): task prompt"><i class="fa-regular fa-file-lines"></i> Task prompt</button><button class="link-btn" data-code-current><i class="fa-solid fa-code"></i> Generated code (selected method)</button>          </div>
+        </div>
+      </div>
+      <details class="more">
+        <summary>Interaction trajectories compared across methods</summary>
+        <div class="inner">
+          <img src="static/images/qualitative_sim.png" alt="Identify Empty Can (LIBERO): interaction trajectories for each method" loading="lazy">
+        </div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== Results ===================== -->
+<section class="block" id="results" data-nav="Results">
+  <div class="container">
+    <h2 class="section-title">Results</h2>
+    <div class="tabs" role="tablist">
+      <button class="tab is-active" data-tab="res-real">Real-world tasks</button>
+      <button class="tab" data-tab="res-sim">Simulation vs. VLAs</button>
+      <button class="tab" data-tab="res-physx">PhysX module evaluation</button>
+      <button class="tab" data-tab="res-backbone">Other VLM backbones</button>
+    </div>
+
+    <!-- Real world -->
+    <div class="tab-panel" data-tab-panel="res-real">
+      <p class="narrow">
+        We evaluate over 10 trials per task with three metrics: task success rate (<b>SR</b> \(\uparrow\)),
+        <b>Objects Interacted</b> (OI \(\downarrow\), physical exploration actions before task completion, including
+        repeated interactions with the same object), and <b>Execution Time</b> (Time \(\downarrow\), total robot
+        execution time). OI and Time are reported only for successful episodes. All agents use Gemini 3.1 Pro.
+      </p>
+      <div class="grid-2">
+        <div>
+          <div class="figure"><img src="static/images/success_rate_tasks.png" alt="Success rates per method and task" loading="lazy"></div>
+          <p class="caption"><b>Success rates.</b> The vision-only CaP baseline performs poorly on all three tasks. PhysCaP matches CaP+PhysX on Empty Can and Ripe Avocado, and improves on the longer-horizon Pack Grocery, where CaP+PhysX can lose track of prior measurements.</p>
+        </div>
+        <div>
+          <div class="figure"><img src="static/images/efficiency_labeled.png" alt="Exploration efficiency: interactions vs execution time" loading="lazy"></div>
+          <p class="caption"><b>Exploratory efficiency.</b> Number of physical interactions vs. total robot execution time. Lower-left is more efficient; bubble area shows the standard deviation.</p>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table class="results">
+          <thead>
+            <tr><th rowspan="2">Method</th><th colspan="2">Identify Empty Can</th><th colspan="2">Pick Ripe Avocado</th><th colspan="2">Pack Grocery Bag</th></tr>
+            <tr><th>OI ↓</th><th>Time ↓</th><th>OI ↓</th><th>Time ↓</th><th>OI ↓</th><th>Time ↓</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>CaP+PhysX</td><td>4.00</td><td>396.84 ± 15 s</td><td>4.00</td><td>515.61 ± 9 s</td><td>9.17</td><td>1019.32 ± 376 s</td></tr>
+            <tr><td>CaP+PhysX+Planner</td><td>3.75</td><td>368.40 ± 62 s</td><td>4.13</td><td>563.29 ± 76 s</td><td>7.80</td><td>853.14 ± 54 s</td></tr>
+            <tr><td>PhysCaP-joint</td><td class="best">2.00</td><td class="best">222.11 ± 2 s</td><td>2.71</td><td>384.39 ± 111 s</td><td>6.50</td><td>682.30 ± 139 s</td></tr>
+            <tr class="ours"><td>PhysCaP (Ours)</td><td class="best">2.00</td><td>256.57 ± 62 s</td><td class="best">2.00</td><td class="best">300.47 ± 53 s</td><td class="best">5.50</td><td class="best">572.79 ± 61 s</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="table-note">PhysCaP achieves the lowest or tied interaction count on all tasks and the shortest execution time on two of three.</p>
+      <div class="callout">
+        <p><b>Why separate the Planner and the Prioritizer?</b> PhysCaP-joint puts prioritization into the Planner prompt, so one VLM call decides both when to stop and what to interact with next. It acts on visual cues such as <i>a straw in a can</i> in some trials, but otherwise falls back to near-exhaustive exploration. A separate Prioritizer applies those cues more consistently.</p>
+      </div>
+    </div>
+
+    <!-- Simulation -->
+    <div class="tab-panel" data-tab-panel="res-sim" hidden>
+      <p class="narrow">
+        Vision-language-action policies map observations to actions without an explicit exploration step. Since it is
+        non-trivial to adapt VLA DROID checkpoints to our PiPER setup, we compare in simulation using the LIBERO
+        environment and the VLAs' publicly released LIBERO checkpoints (50 trials; execution time = simulation steps / 20 Hz).
+      </p>
+      <div class="grid-2">
+        <div>
+          <div class="table-wrap">
+            <table class="results">
+              <thead><tr><th>Method</th><th>SR ↑</th><th>OI ↓</th><th>Time ↓</th></tr></thead>
+              <tbody>
+                <tr><td>CaP+PhysX</td><td>74%</td><td>2.16</td><td class="best">70.81 ± 32.50 s</td></tr>
+                <tr><td>CaP+PhysX+Planner</td><td>62%</td><td>1.45</td><td>79.55 ± 44.49 s</td></tr>
+                <tr class="ours"><td>PhysCaP (Ours)</td><td class="best">78%</td><td class="best">1.44</td><td>71.24 ± 18.63 s</td></tr>
+                <tr class="group"><td colspan="4">Vision-language-action policies</td></tr>
+                <tr><td>OpenVLA</td><td>0%</td><td>—</td><td>—</td></tr>
+                <tr><td>π<sub>0.5</sub></td><td>4%</td><td>1.50</td><td>—</td></tr>
+                <tr><td>MolmoAct2</td><td>23%</td><td>1.04</td><td>—</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="table-note">OI and Time are reported only for successful episodes, so they are undefined for OpenVLA. π<sub>0.5</sub> and MolmoAct2 typically select a can at random, which gives low SR and correspondingly low OI.</p>
+        </div>
+        <div>
+          <div class="vla-grid">
+            <figure>
+              <div class="video-frame"><video autoplay muted loop playsinline preload="none" poster="static/videos/libero_openVLA_fail.jpg"><source src="static/videos/libero_openVLA_fail.mp4" type="video/mp4"></video></div>
+              <figcaption>OpenVLA &middot; <span class="fail">failure</span></figcaption>
+            </figure>
+            <figure>
+              <div class="video-frame"><video autoplay muted loop playsinline preload="none" poster="static/videos/libero_pi05_fail.jpg"><source src="static/videos/libero_pi05_fail.mp4" type="video/mp4"></video></div>
+              <figcaption>π0.5 &middot; <span class="fail">failure</span></figcaption>
+            </figure>
+            <figure>
+              <div class="video-frame"><video autoplay muted loop playsinline preload="none" poster="static/videos/libero_molmoact2_fail.jpg"><source src="static/videos/libero_molmoact2_fail.mp4" type="video/mp4"></video></div>
+              <figcaption>MolmoAct2 &middot; <span class="fail">failure</span></figcaption>
+            </figure>
+            <figure>
+              <div class="video-frame"><video autoplay muted loop playsinline preload="none" poster="static/videos/libero_molmoact2_succ.jpg"><source src="static/videos/libero_molmoact2_succ.mp4" type="video/mp4"></video></div>
+              <figcaption>MolmoAct2 &middot; <span class="ok">success</span></figcaption>
+            </figure>
+          </div>
+          <p class="caption"><b>VLA rollouts in LIBERO.</b> These policies map vision directly to actions without an exploration step; most fail because the empty cup cannot be identified visually.</p>
         </div>
       </div>
     </div>
+
+    <!-- PhysX evaluation -->
+    <div class="tab-panel" data-tab-panel="res-physx" hidden>
+      <h4>Can a VLM estimate mass instead?</h4>
+      <p>
+        We give a VLM progressively more information: the reference image (<b>I</b>), the robot arm's raw joint torques
+        (<b>T</b>, the same readings our <code>get_mass</code> module receives), and the object name (<b>O</b>).
+        On five reference objects from 13 g to 963 g, the best VLM setting has a mean absolute error of
+        134.5 ± 148.4 g, statistically indistinguishable from the image alone (151.5 ± 182.5 g).
+        <code>get_mass</code> reaches 38.1 ± 26.0 g.
+      </p>
+      <div class="stat-row">
+        <div class="stat"><div class="v">38.1 g</div><div class="l">mean absolute error, PhysX <code>get_mass</code></div></div>
+        <div class="stat"><div class="v">134.5 g</div><div class="l">best VLM setting (image + torque + object name)</div></div>
+        <div class="stat"><div class="v">193 g</div><div class="l">mass gap between the empty can and the lightest full can</div></div>
+      </div>
+      <div class="grid-2">
+        <div>
+          <div class="figure"><img src="static/images/mass-eval-monotone.png" alt="Mass estimation across five objects" loading="lazy"></div>
+          <p class="caption"><b>Mass estimation across five objects.</b> PhysX closely matches ground truth, outperforming VLM estimates, which can be misled by visual appearance, e.g., substantially overestimating the mass of the empty can.</p>
+        </div>
+        <div>
+          <div class="figure"><img src="static/images/stiffness-force-displacement.png" alt="Stiffness measurement: force vs displacement" loading="lazy"></div>
+          <p class="caption"><b>Stiffness measurement.</b> Dashed lines mark the stiffness level boundaries, set with a 3D-printed button fitted with springs of known stiffness. The ripe avocado measures at level 2 and the unripe ones at levels 4–5, with no overlap, so a single squeeze is enough to tell them apart.</p>
+        </div>
+      </div>
+      <div class="callout">
+        <p>The limitation is not simply a lack of available information: VLMs struggle to convert physical measurements into accurate quantitative estimates. This motivates PhysX modules that extract physical properties explicitly from robot sensor measurements.</p>
+      </div>
+    </div>
+
+    <!-- Backbones -->
+    <div class="tab-panel" data-tab-panel="res-backbone" hidden>
+      <p class="narrow">
+        PhysCaP is an agentic system, so its backbone can be swapped for any sufficiently capable model. We repeat
+        Identify Empty Can with Gemini 3.1 Pro replaced by Claude Fable 5 and by GPT-6 Astra, driving the Planner,
+        Prioritizer and coding agent. All six configurations reach a 100% success rate, so we compare efficiency.
+        PhysCaP requires fewer interactions and less execution time than CaP+PhysX under every backbone.
+        PhysCaP with Gemini 3.1 Pro (OI 2.0) uses fewer interactions than CaP+PhysX with either GPT-6 Astra
+        (OI 4.1) or Claude Fable 5 (OI 3.3), so on this task the gain comes from the architecture rather than the backbone.
+      </p>
+      <div class="grid-2">
+        <div><div class="figure"><img src="static/images/model_comparison_time.png" alt="Execution time across VLM backbones" loading="lazy"></div><p class="caption"><b>Execution Time</b> (\(\downarrow\))</p></div>
+        <div><div class="figure"><img src="static/images/model_comparison_oi.png" alt="Objects interacted across VLM backbones" loading="lazy"></div><p class="caption"><b>Object Interactions</b> (\(\downarrow\))</p></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ===================== BibTeX ===================== -->
+<section class="block alt" id="bibtex" data-nav="BibTeX">
+  <div class="container narrow">
+    <h2 class="section-title">BibTeX</h2>
+    <div class="bibtex">
+      <button class="copy-btn" data-copy="#bibtex-text"><i class="fa-regular fa-copy"></i> Copy</button>
+      <pre id="bibtex-text">@article{lin2026physcap,
+  title   = {PhysCaP: Grounding Code-as-Policy Agent with Physics-Informed Exploration},
+  author  = {Lin, Chen-Yu and Chen, Jing-Wen and Chang, Hsueh-En and Chen, Hung-An and
+             Chang, Sheng-Hsun and Huang, Chi-Pin and Yang, Fu-En and Chen, Min-Hung and
+             Chen, Yi-Ting and Wang, Yu-Chiang Frank and Sun, Shao-Hua},
+  journal = {arXiv preprint arXiv:2608.21031},
+  year    = {2026}
+}</pre>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    Page layout inspired by <a href="https://stereopolicy.github.io/" target="_blank" rel="noopener">this</a> and
+    <a href="https://robometer.github.io/" target="_blank" rel="noopener">this</a>.
   </div>
 </footer>
 
-<!-- Statcounter tracking code -->
-  
-<!-- You can add a tracker to track page visits by creating an account at statcounter.com -->
+<!-- code / prompt viewer -->
+<div class="modal" id="code-modal" aria-hidden="true">
+  <div class="modal-backdrop" data-close></div>
+  <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="code-modal-title">
+    <div class="modal-head">
+      <h4 id="code-modal-title"></h4>
+      <div>
+        <button class="link-btn" id="code-copy"><i class="fa-regular fa-copy"></i> Copy</button>
+        <button class="modal-close" data-close aria-label="Close">&times;</button>
+      </div>
+    </div>
+    <div class="modal-body"><pre><code id="code-modal-body"></code></pre></div>
+  </div>
+</div>
 
-    <!-- End of Statcounter Code -->
-
-  </body>
-  </html>
+</body>
+</html>
