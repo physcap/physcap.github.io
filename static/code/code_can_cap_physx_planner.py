@@ -1,141 +1,53 @@
 # Code block 0
-print("THOUGHT: The objective is to identify the empty can by measuring their masses. We will begin with the leftmost blue can. | ACTION: Lift leftmost blue can")
-mass = get_mass("leftmost blue can")
-print(f"leftmost blue can mass: {mass}")
-if mass < 0.1:
-    print("Empty can confirmed: leftmost blue can")
-else:
-    print("can leftmost blue can is not empty.")
+print("THOUGHT: I will measure the mass of the black can on the far left to check if it is the empty one. | ACTION: Lift can_0")
+mass = get_mass("the black can on the far left")
+print(f"Mass of can_0: {mass} kg")
 breakpoint_code_block()
 
 # Code block 1
-import numpy as np
 
-print("THOUGHT: The leftmost blue can was not empty. I will now check the second from left can, which is green. | ACTION: Lift second from left green can")
-mass = get_mass("second from left green can")
-print(f"second from left green can mass: {mass}")
-
-if mass < 0.1:
-    print("Empty can confirmed: second from left green can")
-    can_pos, can_quat = get_object_pose("second from left green can")
-    tray_pos, _ = get_object_pose("wooden tray")
-    
-    open_gripper()
-    # Move 10 cm above before grasping
-    goto_pose(can_pos, can_quat, z_approach=0.1)
-    goto_pose(can_pos, can_quat)
-    close_gripper()
-    
-    # Move 10 cm above to avoid collisions before going to target
-    lift_pos = can_pos.copy()
-    lift_pos[2] += 0.1
-    goto_pose(lift_pos, can_quat)
-    
-    # Target height is object's z-coord + 5cm as instructed
-    target_pos = tray_pos.copy()
-    target_pos[2] = can_pos[2] + 0.05
-    
-    # Move to tray and place
-    goto_pose(target_pos, can_quat, z_approach=0.1)
-    goto_pose(target_pos, can_quat)
-    open_gripper()
-    
-    # Move 10 cm above tray before returning home
-    post_place_pos = target_pos.copy()
-    post_place_pos[2] += 0.1
-    goto_pose(post_place_pos, can_quat)
-    
-    home_pose()
-else:
-    print("can second from left green can is not empty.")
-    breakpoint_code_block()
 
 # Code block 2
-import numpy as np
-
-print("THOUGHT: The green can was not empty. I will now check the second from right black can. | ACTION: Lift second from right black can")
-mass = get_mass("second from right black can")
-print(f"second from right black can mass: {mass}")
-
-if mass < 0.1:
-    print("Empty can confirmed: second from right black can")
-    can_pos, can_quat = get_object_pose("second from right black can")
-    tray_pos, _ = get_object_pose("wooden tray")
-    
-    open_gripper()
-    # Move 10 cm above before grasping
-    goto_pose(can_pos, can_quat, z_approach=0.1)
-    goto_pose(can_pos, can_quat)
-    close_gripper()
-    
-    # Move 10 cm above to avoid collisions before going to target
-    lift_pos = can_pos.copy()
-    lift_pos[2] += 0.1
-    goto_pose(lift_pos, can_quat)
-    
-    # Target height is object's z-coord + 5cm as instructed
-    target_pos = tray_pos.copy()
-    target_pos[2] = can_pos[2] + 0.05
-    
-    # Move to tray and place
-    goto_pose(target_pos, can_quat, z_approach=0.1)
-    goto_pose(target_pos, can_quat)
-    open_gripper()
-    
-    # Move 10 cm above tray before returning home
-    post_place_pos = target_pos.copy()
-    post_place_pos[2] += 0.1
-    goto_pose(post_place_pos, can_quat)
-    
-    home_pose()
-else:
-    print("can second from right black can is not empty.")
-    breakpoint_code_block()
+print("THOUGHT: I will measure the mass of the blue can second from the right to check if it is the empty one. | ACTION: Lift can_2")
+mass = get_mass("the blue can second from the right")
+print(f"Mass of can_2: {mass} kg")
+breakpoint_code_block()
 
 # Code block 3
-import numpy as np
-
-print("THOUGHT: The black can was not empty. I will now check the rightmost red can. | ACTION: Lift rightmost red can")
-mass = get_mass("rightmost red can")
-print(f"rightmost red can mass: {mass}")
-
-if mass < 0.1:
-    print("Empty can confirmed: rightmost red can")
-    can_pos, can_quat = get_object_pose("rightmost red can")
-    tray_pos, _ = get_object_pose("wooden tray")
-    
-    open_gripper()
-    # Move 10 cm above before grasping
-    goto_pose(can_pos, can_quat, z_approach=0.1)
-    goto_pose(can_pos, can_quat)
-    close_gripper()
-    
-    # Move 10 cm above to avoid collisions before going to target
-    lift_pos = can_pos.copy()
-    lift_pos[2] += 0.1
-    goto_pose(lift_pos, can_quat)
-    
-    # Target height is object's z-coord + 5cm as instructed
-    target_pos = tray_pos.copy()
-    target_pos[2] = can_pos[2] + 0.05
-    
-    # Move to tray and place
-    goto_pose(target_pos, can_quat, z_approach=0.1)
-    goto_pose(target_pos, can_quat)
-    open_gripper()
-    
-    # Move 10 cm above tray before returning home
-    post_place_pos = target_pos.copy()
-    post_place_pos[2] += 0.1
-    goto_pose(post_place_pos, can_quat)
-    
-    home_pose()
-else:
-    print("can rightmost red can is not empty.")
-    breakpoint_code_block()
+print("THOUGHT: I will measure the mass of the red Coca-Cola can on the far right to check if it is the empty one. | ACTION: Lift can_3")
+mass = get_mass("the red Coca-Cola can on the far right")
+print(f"Mass of can_3: {mass} kg")
+breakpoint_code_block()
 
 # Code block 4
 import numpy as np
 
-print("THOUGHT: The empty can has been successfully identified and moved to the wooden tray. The task is now complete. | ACTION: Return to home pose")
+print("THOUGHT: The red Coca-Cola can on the far right (can_3) was measured to have a mass of -0.0376 kg. Since this is below 0.1 kg, it is the empty can. I will pick it up and place it on the wooden tray to complete the task. | ACTION: Lift can_3")
+print("Empty can confirmed: can_3")
+
+can_pos, can_quat = get_object_pose("the red Coca-Cola can on the far right")
+tray_pos, tray_quat = get_object_pose("the wooden tray in the middle")
+
+# Open gripper and approach the empty can
+open_gripper()
+goto_pose(can_pos, can_quat, z_approach=0.1)
+
+# Grasp the can
+goto_pose(can_pos, can_quat)
+close_gripper()
+
+# Lift 10 cm above the object to avoid collisions before moving laterally
+goto_pose(can_pos + np.array([0.0, 0.0, 0.1]), can_quat)
+
+# Move to the tray, matching object's original grasp z-coordinate + 5 cm to clear the tray's lip safely
+place_pos = np.array([tray_pos[0], tray_pos[1], can_pos[2] + 0.05])
+goto_pose(place_pos, can_quat)
+
+# Release the can onto the tray
+open_gripper()
+
+# Lift arm 20 cm above the tray and object before going home
+goto_pose(place_pos + np.array([0.0, 0.0, 0.2]), can_quat)
+
+# Task complete, return to home position
 home_pose()

@@ -1,74 +1,62 @@
 # Code block 0
-print("THOUGHT: I need to measure the mass of the red cube on the far left to determine its properties for packing order. Heavy and rigid items should be packed first at the bottom of the bag. | ACTION: Measure mass of cube_0")
-mass = get_mass("the red cube on the far left")
-print(f"Mass of cube_0: {mass:.3f} kg")
+mass = get_mass("the red cube on the left")
+print(f"Mass of cube_0 (the red cube on the left): {mass} kg")
 breakpoint_code_block()
 
 # Code block 1
-print("THOUGHT: I need to measure the mass of the yellow cube to help determine the packing order. | ACTION: Measure mass of cube_1")
-mass_1 = get_mass("the yellow cube second from the left")
-print(f"Mass of cube_1: {mass_1:.3f} kg")
+mass = get_mass("the yellow cube second from the left")
+print(f"Mass of cube_1 (the yellow cube second from the left): {mass} kg")
 breakpoint_code_block()
 
 # Code block 2
-print("THOUGHT: I need to measure the mass of the green cube to help determine the packing order. | ACTION: Measure mass of cube_2")
-mass_2 = get_mass("the green cube second from the right")
-print(f"Mass of cube_2: {mass_2:.3f} kg")
+mass = get_mass("the green cube second from the right")
+print(f"Mass of cube_2 (the green cube second from the right): {mass} kg")
 breakpoint_code_block()
 
 # Code block 3
-print("THOUGHT: I need to measure the mass of the blue cube to help determine the packing order. | ACTION: Measure mass of cube_3")
-mass_3 = get_mass("the blue cube on the far right")
-print(f"Mass of cube_3: {mass_3:.3f} kg")
+mass = get_mass("the blue cube on the right")
+print(f"Mass of cube_3 (the blue cube on the right): {mass} kg")
 breakpoint_code_block()
 
 # Code block 4
-print("THOUGHT: I need to measure the stiffness of the yellow cube to help determine if it should be packed at the bottom or top of the bag. | ACTION: Measure stiffness of cube_1")
-stiffness_1 = get_stiffness("the yellow cube second from the left")
-print(f"Stiffness of cube_1: {stiffness_1}")
+stiffness = get_stiffness("the yellow cube second from the left")
+print(f"Stiffness of cube_1 (the yellow cube second from the left): {stiffness}")
 breakpoint_code_block()
 
 # Code block 5
-print("THOUGHT: I need to measure the stiffness of the green cube to help determine if it should be packed at the bottom or top of the bag. | ACTION: Measure stiffness of cube_2")
-stiffness_2 = get_stiffness("the green cube second from the right")
-print(f"Stiffness of cube_2: {stiffness_2}")
+stiffness = get_stiffness("the green cube second from the right")
+print(f"Stiffness of cube_2 (the green cube second from the right): {stiffness}")
 breakpoint_code_block()
 
 # Code block 6
 import numpy as np
 
-print("THOUGHT: Based on the measurements, the green cube is the heaviest (0.411 kg) and most rigid (level 5), making it the ideal foundational item for the bottom of the bag. | ACTION: Pack cube_2")
+print("THOUGHT: The green cube is heavy (0.356 kg) and completely rigid (stiffness level 5). To prevent crushing softer items like the semi-rigid yellow cube, the most rigid and heavy items should be packed at the very bottom of the bag. | ACTION: Pack cube_2 into bag_0.")
 print("FIRST ITEM: cube_2")
 
-# Get cube pose
 cube_pos, cube_quat = get_object_pose("the green cube second from the right")
+bag_pos, bag_quat = get_object_pose("the white paper bag in the middle")
 
-# Approach and grasp the green cube
 open_gripper()
+
+# Move 10 cm above the cube before grasping to avoid collisions
 goto_pose(cube_pos, z_approach=0.1)
 goto_pose(cube_pos)
 close_gripper()
+
+# Lift the cube 10 cm above its original position
 goto_pose(cube_pos, z_approach=0.1)
 
-# Get bag pose
-bag_pos, bag_quat = get_object_pose("the white paper bag in the middle")
-
-# Aim for 5 cm above the bag's rim. 
-# We add an offset to the bag's detected Z position to safely clear the rim.
+# Move to the bag, aiming 5 cm above the bag's rim to ensure it clears the wall
 drop_pos = bag_pos.copy()
-drop_pos[2] += 0.15
-
-# Approach the drop position (z_approach adds another 10 cm initially)
-goto_pose(drop_pos, z_approach=0.1)
-
-# Move down to exactly 5 cm above the bag's rim
+drop_pos[2] = max(drop_pos[2] + 0.20, 0.25) # approximate rim height + 5cm
 goto_pose(drop_pos)
-
-# Release the cube into the bag
 open_gripper()
 
-# Move 10 cm above the bag drop position before going home to avoid dragging it
-goto_pose(drop_pos, z_approach=0.1)
+# Move 10 cm above the bag after placing the item
+post_drop_pos = drop_pos.copy()
+post_drop_pos[2] += 0.10
+goto_pose(post_drop_pos)
 
-# Return to rest pose
+# Return to home pose
 home_pose()
