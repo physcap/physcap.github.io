@@ -644,3 +644,17 @@ h3.sub-title { text-align: center; font-size: 1.6rem; margin: 0.2rem 0 1rem; }
             mask-image: linear-gradient(to right, #000 calc(100% - 3rem), rgba(0, 0, 0, 0.2));
   }
 }
+
+/* ---------- news (public site only) ---------- */
+section.block.news-block { padding: 2.6rem 0 2.4rem; }
+.news { list-style: none; margin: 0 auto; padding: 0; max-width: 760px; }
+.news li {
+  display: grid; grid-template-columns: 5.6rem 1fr; column-gap: 1rem; align-items: baseline;
+  padding: 0.55rem 0; border-bottom: 1px solid var(--border);
+}
+.news li:last-child { border-bottom: 0; }
+.news-date { font-family: var(--font-head); font-weight: 600; font-size: 0.92rem; color: var(--accent); white-space: nowrap; }
+@media (max-width: 720px) {
+  section.block.news-block { padding: 2rem 0 1.8rem; }
+  .news li { grid-template-columns: 1fr; row-gap: 0.1rem; }
+}
