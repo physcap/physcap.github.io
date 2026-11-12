@@ -403,9 +403,15 @@ footer { padding: 2.4rem 0; text-align: center; font-size: 0.85rem; color: var(-
 }
 @media (max-width: 720px) {
   .container { width: calc(100% - 2rem); }
-  .topbar { padding: 0 1rem; }
-  .topbar nav { display: none; }
-  .topbar .current-label { display: block; margin-left: auto; font-family: var(--font-head); font-size: 0.9rem; opacity: 0.85; }
+  /* phones: the section links stay in the bar and scroll sideways; the current one is kept in view (main.js) */
+  .topbar { padding: 0 0.5rem 0 1rem; gap: 0.5rem; }
+  .topbar .brand { flex-shrink: 0; }
+  .topbar nav {
+    gap: 0.1rem; padding: 0 0.6rem;
+    -webkit-mask-image: linear-gradient(to right, transparent, #000 0.6rem, #000 calc(100% - 0.6rem), transparent);
+            mask-image: linear-gradient(to right, transparent, #000 0.6rem, #000 calc(100% - 0.6rem), transparent);
+  }
+  .topbar nav a { font-size: 0.85rem; padding: 0.3rem 0.6rem; }
   section.block { padding: 2.6rem 0; }
   h2.section-title { font-size: 1.6rem; }
   .authors .author { margin: 0 0.3rem; }
@@ -603,3 +609,38 @@ h3.sub-title { text-align: center; font-size: 1.6rem; margin: 0.2rem 0 1rem; }
 .hero .authors a:hover { color: #fff; text-decoration: underline; }
 .hero .btn, .hero .venue { box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3); }
 .hero .title img.cap { filter: drop-shadow(0 0 0.05em rgba(255,255,255,0.95)) drop-shadow(0 0 0.05em rgba(255,255,255,0.85)) drop-shadow(0 0 0.18em rgba(255,255,255,0.35)); }
+
+/* ---------- phones only (<= 720px); wider screens are unaffected ---------- */
+.on-narrow { display: none; }
+@media (max-width: 720px) {
+  .on-wide { display: none; }
+  .method-hint .on-narrow { display: inline; }
+
+  /* first screen: a little less padding so title, venues and buttons fit on one screen */
+  .hero-inner { padding: 4.5rem 1rem 4.5rem; }
+  .venue { font-size: 0.85rem; padding: 0.3rem 0.8rem; }
+
+  /* justified text leaves wide gaps in a narrow column */
+  .lead { text-align: left; }
+
+  /* framework figure: fit the screen instead of a 900px strip; full size opens in a new tab */
+  .method-stage { min-width: 0; }
+  a.fig-open {
+    display: flex; align-items: center; gap: 0.35rem; width: max-content; margin: 0.6rem auto 0;
+    font-family: var(--font-head); font-size: 0.85rem; font-weight: 500; color: var(--accent-dark);
+    border: 1px solid var(--border-strong); border-radius: 6px; padding: 0.3rem 0.7rem; background: #fff;
+  }
+  a.fig-open:hover { text-decoration: none; background: var(--accent-soft); }
+
+  /* wide tables: method names stay pinned while the numbers scroll; right edge fades while more is hidden (main.js) */
+  table.results thead tr:first-child th:first-child,
+  table.results tbody tr:not(.group) td:first-child {
+    position: sticky; left: 0; z-index: 1; background: #fff; box-shadow: inset -1px 0 0 var(--border);
+  }
+  table.results thead tr:first-child th:first-child { background: var(--page-alt); }
+  table.results tbody tr.ours td:first-child { background: var(--tint); }
+  .table-wrap.more-right {
+    -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 3rem), rgba(0, 0, 0, 0.2));
+            mask-image: linear-gradient(to right, #000 calc(100% - 3rem), rgba(0, 0, 0, 0.2));
+  }
+}

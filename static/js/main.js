@@ -11,6 +11,16 @@
   const navLinks = $$("#section-nav a");
   const label = $("#current-label");
   const sections = navLinks.map((a) => $(a.getAttribute("href"))).filter(Boolean);
+  const nav = $("#section-nav");
+  let lastCurrent = null;
+
+  // On phones the section links scroll sideways; keep the current one centered. No-op when they all fit.
+  function revealCurrentLink(id) {
+    const a = navLinks.find((l) => l.getAttribute("href") === "#" + id);
+    if (!a || nav.scrollWidth <= nav.clientWidth) return;
+    const r = a.getBoundingClientRect(), n = nav.getBoundingClientRect();
+    nav.scrollBy({ left: r.left + r.width / 2 - (n.left + n.width / 2), behavior: "smooth" });
+  }
 
   function onScroll() {
     const y = window.scrollY;
@@ -21,10 +31,27 @@
     for (const s of sections) if (s.getBoundingClientRect().top <= 90) current = s;
     navLinks.forEach((a) => a.classList.toggle("is-current", current && a.getAttribute("href") === "#" + current.id));
     if (label) label.textContent = current ? current.dataset.nav : "";
+    if (current && current !== lastCurrent) revealCurrentLink(current.id);
+    lastCurrent = current;
   }
   window.addEventListener("scroll", onScroll, { passive: true });
   window.addEventListener("resize", onScroll);
   onScroll();
+
+  // ---------- wide tables: flag when more columns are hidden to the right (faded on phones, see style.css) ----------
+  const tableWraps = $$(".table-wrap");
+  const updateWrap = (w) => w.classList.toggle("more-right", w.scrollLeft + w.clientWidth < w.scrollWidth - 4);
+  tableWraps.forEach((w) => {
+    w.addEventListener("scroll", () => updateWrap(w), { passive: true });
+    updateWrap(w);
+  });
+  // tables inside hidden tabs have no size until shown, so re-check whenever a wrapper's size changes
+  if ("ResizeObserver" in window) {
+    const ro = new ResizeObserver((entries) => entries.forEach((e) => updateWrap(e.target)));
+    tableWraps.forEach((w) => ro.observe(w));
+  } else {
+    window.addEventListener("resize", () => tableWraps.forEach(updateWrap));
+  }
 
   // ---------- clickable framework figure ----------
   const stage = $("#method-stage");
